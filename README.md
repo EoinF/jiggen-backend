@@ -37,4 +37,25 @@ The war file is generated in:
     NOTE: It automatically unpackages the war file and creates a directory using 
     the name of the war file
 
-7. 
+6. Install mysql-server
+
+7. Create the database with an sql user:
+        
+        mysql> create database db_jiggen;
+        mysql> create user 'springuser'@'localhost' identified by 'ThePassword';
+        mysql> grant all on db_jiggen.* to 'springuser'@'localhost';
+
+8. Revoke permissions on the sql user, to protect against attacks
+
+        mysql> revoke all on db_jiggen.* from 'springuser'@'localhost';
+        mysql> grant select, insert, delete, update on db_jiggen.*
+
+9. Inside webapps/jiggen-backend/WEB-INF/classes/application.properties, change the following line:
+
+        spring.jpa.hibernate.ddl-auto=create
+    
+    to
+    
+        spring.jpa.hibernate.ddl-auto=none
+        
+    This prevents hibernate from generating more tables

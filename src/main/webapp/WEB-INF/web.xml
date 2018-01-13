@@ -2,7 +2,7 @@
 <web-app>
     <filter>
         <filter-name>SparkFilter</filter-name>
-        <filter-class>spark.servlet.SparkFilter</filter-class>
+        <filter-class>com.github.eoinf.jiggen.SpringifiedSparkFilter</filter-class>
         <init-param>
             <param-name>applicationClass</param-name>
             <param-value>com.github.eoinf.jiggen.Application</param-value>

@@ -1,22 +1,21 @@
 package com.github.eoinf.jiggen
 
-import spark.Spark.exception
-import spark.Spark.get
-import spark.servlet.SparkApplication
-
-/**
- * Class required for deploying as a servlet
+/*
+    Entry point for running the app locally for dev testing
  */
-class Application : SparkApplication {
-    override fun init() {
-        exception(Exception::class.java) { e, req, res -> e.printStackTrace() }
-
-        get("/") { req, res -> "This resource manages users and cached puzzles for the jiggen game" }
-        get("/hello") { req, res -> "Hello World" }
-    }
+fun main(args: Array<String>) {
+    val app = Application(TestPuzzleDao(), JsonTransformer())
+    app.init()
 }
 
+class TestPuzzleDao : PuzzleDao {
+    override fun get(id: Long): CachedPuzzle? {
+        var puzzle = CachedPuzzle()
+        puzzle.id = 5
+        return puzzle
+    }
 
-fun main(args: Array<String>) {
-    Application()
+    override fun post(puzzle: CachedPuzzle) {
+        // Do nothing
+    }
 }

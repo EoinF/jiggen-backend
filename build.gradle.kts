@@ -6,10 +6,14 @@ version = "1.0-SNAPSHOT"
 buildscript {
     var kotlin_version: String by extra
     var spark_version: String by extra
+    var gson_version: String by extra
+    var log4j_version: String by extra
 
     val spring_boot_version = "1.5.9.RELEASE"
     kotlin_version = "1.2.10"
     spark_version = "2.5.4"
+    gson_version = "2.8.2"
+    log4j_version = "2.9.0"
 
     repositories {
         mavenCentral()
@@ -19,7 +23,6 @@ buildscript {
         classpath(kotlinModule("gradle-plugin", kotlin_version))
         classpath("org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version")
     }
-    
 }
 
 apply {
@@ -30,6 +33,8 @@ apply {
 
 val kotlin_version: String by extra
 val spark_version: String by extra
+val gson_version: String by extra
+val log4j_version: String by extra
 
 repositories {
     mavenCentral()
@@ -44,6 +49,8 @@ dependencies {
 
     compile(kotlinModule("stdlib-jdk8", kotlin_version))
     compile("com.sparkjava:spark-core:$spark_version")
+    compile("com.google.code.gson:gson:$gson_version")
+    compile("org.apache.logging.log4j:log4j-core:$log4j_version")
 }
 
 tasks.withType<KotlinCompile> {
