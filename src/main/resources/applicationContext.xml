@@ -12,6 +12,8 @@
         <constructor-arg ref="jsonTransformer" />
     </bean>
 
-    <bean id="puzzleDao" class="com.github.eoinf.jiggen.PuzzleRepoDao" />
+    <bean id="puzzleDao" class="com.github.eoinf.jiggen.dao.PuzzleRepoDao" />
+    <bean id="templateDao" class="com.github.eoinf.jiggen.dao.TemplateRepoDao" />
+    <bean id="backgroundDao" class="com.github.eoinf.jiggen.dao.BackgroundRepoDao" />
     <bean id="jsonTransformer" class="com.github.eoinf.jiggen.JsonTransformer" />
 </beans>

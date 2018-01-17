@@ -11,4 +11,7 @@ class JsonTransformer {
             gson.toJson(o)
         }
     }
+    fun <T> fromJson(json: String, o: Class<T>) : T {
+        return gson.fromJson(json, o)
+    }
 }

@@ -48,9 +48,10 @@ dependencies {
     compile("mysql:mysql-connector-java")
 
     compile(kotlinModule("stdlib-jdk8", kotlin_version))
-    compile("com.sparkjava:spark-core:$spark_version")
-    compile("com.google.code.gson:gson:$gson_version")
-    compile("org.apache.logging.log4j:log4j-core:$log4j_version")
+    compile(group="com.sparkjava", name="spark-core", version=spark_version)
+    compile(group="com.google.code.gson", name="gson", version=gson_version)
+    compile(group="org.apache.logging.log4j", name="log4j-core", version=log4j_version)
+    compile(group="org.apache.logging.log4j", name="log4j-api", version=log4j_version)
 }
 
 tasks.withType<KotlinCompile> {
