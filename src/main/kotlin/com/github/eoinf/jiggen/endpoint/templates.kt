@@ -13,7 +13,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
     path("/templates") {
         get("") { req, res ->
             logger.info("GET All request handled")
-            setJsonContent(res)
+            setJsonContentType(res)
             jsonTransformer.toJson(templateDao.get())
         }
         get("/:id") { req, res ->
@@ -26,7 +26,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
                 res.status(404)
                 ""
             } else {
-                setJsonContent(res)
+                setJsonContentType(res)
                 jsonTransformer.toJson(template)
             }
         }

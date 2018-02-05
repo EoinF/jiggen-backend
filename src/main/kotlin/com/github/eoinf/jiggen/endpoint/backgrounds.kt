@@ -13,7 +13,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
     path("/backgrounds") {
         get("") { req, res ->
             logger.info("GET All request handled")
-            setJsonContent(res)
+            setJsonContentType(res)
             jsonTransformer.toJson(backgroundDao.get())
         }
         get("/:id") { req, res ->
@@ -26,7 +26,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
                 res.status(404)
                 ""
             } else {
-                setJsonContent(res)
+                setJsonContentType(res)
                 jsonTransformer.toJson(background)
             }
         }

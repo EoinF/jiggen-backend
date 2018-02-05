@@ -10,8 +10,6 @@ import org.apache.logging.log4j.LogManager
 import spark.Spark.get
 import spark.Spark.exception
 import spark.servlet.SparkApplication
-import spark.Spark.before
-
 
 
 /**

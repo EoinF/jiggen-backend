@@ -9,7 +9,7 @@ import java.io.Serializable
 import java.time.LocalDateTime
 
 @Entity
-class CachedPuzzle : Serializable {
+class FinishedPuzzle : Serializable {
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
     var id: Int? = null
