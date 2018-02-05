@@ -10,8 +10,6 @@ import org.apache.logging.log4j.LogManager
 import spark.Spark.get
 import spark.Spark.exception
 import spark.servlet.SparkApplication
-import spark.Spark.before
-
 
 
 /**
@@ -30,10 +28,24 @@ class Application(
         logger.info("Application::init: Initializing Application")
         exception(Exception::class.java) { e, req, res -> e.printStackTrace() }
 
+        initStorage()
+
         get("/") { _, _ -> "This resource manages users and cached puzzles for the jiggen game" }
 
         puzzlesEndpoint(puzzleDao, jsonTransformer)
         templatesEndpoint(templateDao, jsonTransformer)
         backgroundsEndpoint(backgroundDao, jsonTransformer)
+    }
+
+    /**
+     * Move default template and background files to non-volatile storage
+     */
+    fun initStorage() {
+        var templates = utils.getTemplateFiles().stream().map { fh -> fh.file() }
+        var backgrounds = utils.getBackgroundFiles().stream().map { fh -> fh.file() }
+
+        templates.forEach {
+            templateDao.save(it)
+        }
     }
 }

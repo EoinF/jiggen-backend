@@ -59,3 +59,13 @@ The war file is generated in:
         spring.jpa.hibernate.ddl-auto=none
         
     This prevents hibernate from generating more tables
+    
+    
+## Extra Notes
+
+The default application.properties file is volatile, as it resides inside the webapps directory.
+Therefore, the app looks in the following location for a spring configuration file:
+    
+    /etc/config/jiggen/application.properties
+    
+This ensures configuration persists between deployments

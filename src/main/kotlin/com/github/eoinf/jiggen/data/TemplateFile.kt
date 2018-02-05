@@ -7,7 +7,6 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 class TemplateFile() : Serializable {
-
     constructor(filename: String): this() {
         this.filename = filename
     }

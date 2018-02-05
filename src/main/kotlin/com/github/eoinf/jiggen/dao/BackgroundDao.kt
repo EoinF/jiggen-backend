@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 interface IBackgroundDao {
     fun get() : Array<BackgroundFile>
     fun get(id: Int?) : BackgroundFile?
-    fun post(background: BackgroundFile) : BackgroundFile
+    fun save(background: BackgroundFile) : BackgroundFile
 }
 
 class BackgroundRepoDao : IBackgroundDao {
@@ -21,7 +21,7 @@ class BackgroundRepoDao : IBackgroundDao {
         return backgroundRepository.findAll().toList().toTypedArray()
     }
 
-    override fun post(background: BackgroundFile) : BackgroundFile {
+    override fun save(background: BackgroundFile) : BackgroundFile {
         return backgroundRepository.save(background)
     }
 
