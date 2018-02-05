@@ -8,8 +8,8 @@ import javax.persistence.Id
 
 class TemplateFile() : Serializable {
 
-    constructor(filename: String): this() {
-        this.filename = filename
+    constructor(image: String): this() {
+        this.image = image
     }
 
     @Id
@@ -17,5 +17,5 @@ class TemplateFile() : Serializable {
     var id: Int? = null
 
     @Basic
-    var filename: String? = null
+    var image: String? = null
 }

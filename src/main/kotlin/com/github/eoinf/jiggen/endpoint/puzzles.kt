@@ -10,7 +10,7 @@ import spark.Spark.post
 
 private val logger = LogManager.getLogger()
 
-fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer) {
+fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer, baseUrl: String) {
     path("/puzzles") {
         get("") { req, res ->
             logger.info("GET All request handled")

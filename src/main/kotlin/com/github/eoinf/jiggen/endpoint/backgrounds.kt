@@ -9,7 +9,7 @@ import spark.Spark.path
 
 private val logger = LogManager.getLogger()
 
-fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTransformer) {
+fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTransformer, baseUrl: String) {
     path("/backgrounds") {
         get("") { req, res ->
             logger.info("GET All request handled")
@@ -31,5 +31,4 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
             }
         }
     }
-
 }

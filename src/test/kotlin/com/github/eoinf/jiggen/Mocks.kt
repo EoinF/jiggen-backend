@@ -4,22 +4,22 @@ import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.dao.IPuzzleDao
 import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.data.BackgroundFile
-import com.github.eoinf.jiggen.data.CachedPuzzle
+import com.github.eoinf.jiggen.data.FinishedPuzzle
 import com.github.eoinf.jiggen.data.TemplateFile
 
 class TestPuzzleDao : IPuzzleDao {
     private var idInc = 1
-    private val puzzles = HashMap<Int, CachedPuzzle>()
+    private val puzzles = HashMap<Int, FinishedPuzzle>()
 
-    override fun get(): Array<CachedPuzzle> {
+    override fun get(): Array<FinishedPuzzle> {
         return puzzles.values.toList().toTypedArray()
     }
 
-    override fun get(id: Int?): CachedPuzzle? {
+    override fun get(id: Int?): FinishedPuzzle? {
         return puzzles[id]
     }
 
-    override fun post(puzzle: CachedPuzzle) : CachedPuzzle {
+    override fun post(puzzle: FinishedPuzzle) : FinishedPuzzle {
         val newId = idInc++
         puzzle.id = newId
         puzzles[newId] = puzzle
