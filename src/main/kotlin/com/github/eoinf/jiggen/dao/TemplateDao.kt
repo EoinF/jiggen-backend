@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 interface ITemplateDao {
     fun get() : Array<TemplateFile>
     fun get(id: Int?) : TemplateFile?
-    fun post(template: TemplateFile) : TemplateFile
+    fun save(template: TemplateFile) : TemplateFile
 }
 
 class TemplateRepoDao : ITemplateDao {
@@ -21,7 +21,7 @@ class TemplateRepoDao : ITemplateDao {
         return templateRepository.findAll().toList().toTypedArray()
     }
 
-    override fun post(template: TemplateFile) : TemplateFile {
+    override fun save(template: TemplateFile) : TemplateFile {
         return templateRepository.save(template)
     }
 

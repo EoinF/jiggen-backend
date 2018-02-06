@@ -9,6 +9,8 @@
 
     <bean id="Application" class="com.github.eoinf.jiggen.Application">
         <constructor-arg ref="puzzleDao" />
+        <constructor-arg ref="templateDao" />
+        <constructor-arg ref="backgroundDao" />
         <constructor-arg ref="jsonTransformer" />
     </bean>
 

@@ -36,7 +36,7 @@ fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer, bas
             var puzzle = jsonTransformer.fromJson(req.body(), FinishedPuzzle::class.java)
 
             if (puzzle.template != null && puzzle.background != null) {
-                puzzle = puzzleDao.post(puzzle)
+                puzzle = puzzleDao.save(puzzle)
                 res.status(201)
                 setJsonContentType(res)
                 jsonTransformer.toJson(puzzle)

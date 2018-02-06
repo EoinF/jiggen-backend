@@ -19,7 +19,7 @@ class TestPuzzleDao : IPuzzleDao {
         return puzzles[id]
     }
 
-    override fun post(puzzle: FinishedPuzzle) : FinishedPuzzle {
+    override fun save(puzzle: FinishedPuzzle) : FinishedPuzzle {
         val newId = idInc++
         puzzle.id = newId
         puzzles[newId] = puzzle
@@ -39,15 +39,15 @@ class TestTemplateDao : ITemplateDao {
         return templates[id]
     }
 
-    override fun post(template: TemplateFile) : TemplateFile {
+    override fun save(template: TemplateFile) : TemplateFile {
         val newId = idInc++
         template.id = newId
         templates[newId] = template
         return template
     }
     init {
-        this.post(TemplateFile("template1.jpg"))
-        this.post(TemplateFile("template2.jpg"))
+        this.save(TemplateFile("template1.jpg"))
+        this.save(TemplateFile("template2.jpg"))
     }
 }
 
@@ -63,7 +63,7 @@ class TestBackgroundDao : IBackgroundDao {
         return backgrounds[id]
     }
 
-    override fun post(background: BackgroundFile) : BackgroundFile {
+    override fun save(background: BackgroundFile) : BackgroundFile {
         val newId = idInc++
         background.id = newId
         backgrounds[newId] = background
@@ -71,6 +71,6 @@ class TestBackgroundDao : IBackgroundDao {
     }
 
     init {
-        this.post(BackgroundFile("background1.jpg"))
+        this.save(BackgroundFile("background1.jpg"))
     }
 }

@@ -8,15 +8,18 @@ buildscript {
     var spark_version: String by extra
     var gson_version: String by extra
     var log4j_version: String by extra
+    var jiggen_version: String by extra
 
     val spring_boot_version = "1.5.9.RELEASE"
     kotlin_version = "1.2.10"
     spark_version = "2.5.4"
     gson_version = "2.8.2"
     log4j_version = "2.9.0"
+    jiggen_version = "1.0"
 
     repositories {
         mavenCentral()
+        mavenLocal()
     }
     
     dependencies {
@@ -35,9 +38,11 @@ val kotlin_version: String by extra
 val spark_version: String by extra
 val gson_version: String by extra
 val log4j_version: String by extra
+val jiggen_version: String by extra
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
@@ -52,6 +57,8 @@ dependencies {
     compile(group="com.google.code.gson", name="gson", version=gson_version)
     compile(group="org.apache.logging.log4j", name="log4j-core", version=log4j_version)
     compile(group="org.apache.logging.log4j", name="log4j-api", version=log4j_version)
+
+    compile(group="com.github.eoinf.jiggen", name="core", version=jiggen_version)
 }
 
 tasks.withType<KotlinCompile> {

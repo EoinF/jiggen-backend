@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired
 interface IPuzzleDao {
     fun get() : Array<FinishedPuzzle>
     fun get(id: Int?) : FinishedPuzzle?
-    fun post(puzzle: FinishedPuzzle) : FinishedPuzzle
+    fun save(puzzle: FinishedPuzzle) : FinishedPuzzle
 }
 
 class PuzzleRepoDao : IPuzzleDao {
@@ -21,7 +21,7 @@ class PuzzleRepoDao : IPuzzleDao {
         return puzzleRepository.findAll().toList().toTypedArray()
     }
 
-    override fun post(puzzle: FinishedPuzzle) : FinishedPuzzle {
+    override fun save(puzzle: FinishedPuzzle) : FinishedPuzzle {
         return puzzleRepository.save(puzzle)
     }
 
