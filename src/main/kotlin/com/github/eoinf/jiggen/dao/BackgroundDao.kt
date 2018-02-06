@@ -8,6 +8,7 @@ interface IBackgroundDao {
     fun get() : Array<BackgroundFile>
     fun get(id: Int?) : BackgroundFile?
     fun save(background: BackgroundFile) : BackgroundFile
+    fun findByImageId(id: String): BackgroundFile?
 }
 
 class BackgroundRepoDao : IBackgroundDao {
@@ -25,5 +26,7 @@ class BackgroundRepoDao : IBackgroundDao {
         return backgroundRepository.save(background)
     }
 
-
+    override fun findByImageId(id: String): BackgroundFile? {
+        return backgroundRepository.findByImageId(id)
+    }
 }

@@ -45,9 +45,21 @@ class TestTemplateDao : ITemplateDao {
         templates[newId] = template
         return template
     }
+
+    override fun findByImageId(id: String): TemplateFile? {
+        val opt = templates.values.stream().filter {
+            it.imageId == id
+        }.findFirst()
+        return if (opt.isPresent) {
+            opt.get()
+        }
+        else {
+            null
+        }
+    }
     init {
-        this.save(TemplateFile("template1.jpg"))
-        this.save(TemplateFile("template2.jpg"))
+        this.save(TemplateFile("template1"))
+        this.save(TemplateFile("template2"))
     }
 }
 
@@ -70,7 +82,19 @@ class TestBackgroundDao : IBackgroundDao {
         return background
     }
 
+    override fun findByImageId(id: String): BackgroundFile? {
+        val opt = backgrounds.values.stream().filter {
+            it.imageId == id
+        }.findFirst()
+        return if (opt.isPresent) {
+            opt.get()
+        }
+        else {
+            null
+        }
+    }
+
     init {
-        this.save(BackgroundFile("background1.jpg"))
+        this.save(BackgroundFile("background1"))
     }
 }

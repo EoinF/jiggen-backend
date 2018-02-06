@@ -3,10 +3,14 @@ package com.github.eoinf.jiggen.endpoint
 
 import spark.Response
 
-fun setJsonContentType(res: Response) {
-    res.header("Content-Type", "application/json")
+fun Response.setJsonContentType() {
+    this.header("Content-Type", "application/json")
 }
 
-fun setPNGContentType(res: Response) {
-    res.header("Content-Type", "image/png")
+fun Response.setImageContentType(extension: String) {
+    this.header("Content-Type", "image/$extension")
+}
+
+fun splitFilename(filename: String) : List<String> {
+    return filename.split('.')
 }

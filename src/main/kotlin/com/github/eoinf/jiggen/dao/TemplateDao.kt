@@ -8,6 +8,7 @@ interface ITemplateDao {
     fun get() : Array<TemplateFile>
     fun get(id: Int?) : TemplateFile?
     fun save(template: TemplateFile) : TemplateFile
+    fun findByImageId(id: String): TemplateFile?
 }
 
 class TemplateRepoDao : ITemplateDao {
@@ -25,5 +26,7 @@ class TemplateRepoDao : ITemplateDao {
         return templateRepository.save(template)
     }
 
-
+    override fun findByImageId(id: String): TemplateFile? {
+        return templateRepository.findByImageId(id)
+    }
 }

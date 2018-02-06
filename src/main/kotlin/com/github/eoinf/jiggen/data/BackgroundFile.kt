@@ -7,8 +7,8 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 class BackgroundFile() : Serializable {
-    constructor(filename: String): this() {
-        this.filename = filename
+    constructor(imageId: String): this() {
+        this.imageId = imageId
     }
 
     @Id
@@ -16,5 +16,9 @@ class BackgroundFile() : Serializable {
     var id: Int? = null
 
     @Basic
-    var filename: String? = null
+    var imageId: String? = null
+
+    var name: String? = null
+
+    var extension: String? = null
 }

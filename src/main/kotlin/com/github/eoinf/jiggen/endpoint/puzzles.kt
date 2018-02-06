@@ -14,7 +14,7 @@ fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer, bas
     path("/puzzles") {
         get("") { req, res ->
             logger.info("GET All request handled")
-            setJsonContentType(res)
+            res.setJsonContentType()
             jsonTransformer.toJson(puzzleDao.get())
         }
         get("/:id") { req, res ->
@@ -27,7 +27,7 @@ fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer, bas
                 res.status(404)
                 ""
             } else {
-                setJsonContentType(res)
+                res.setJsonContentType()
                 jsonTransformer.toJson(puzzle)
             }
         }
@@ -38,7 +38,7 @@ fun puzzlesEndpoint(puzzleDao: IPuzzleDao, jsonTransformer: JsonTransformer, bas
             if (puzzle.template != null && puzzle.background != null) {
                 puzzle = puzzleDao.save(puzzle)
                 res.status(201)
-                setJsonContentType(res)
+                res.setJsonContentType()
                 jsonTransformer.toJson(puzzle)
             } else {
                 res.status(400)

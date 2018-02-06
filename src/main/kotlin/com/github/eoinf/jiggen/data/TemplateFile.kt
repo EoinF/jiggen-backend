@@ -1,5 +1,7 @@
 package com.github.eoinf.jiggen.data
 
+import org.hibernate.annotations.NamedQuery
+import org.springframework.data.jpa.repository.Query
 import java.io.Serializable
 import javax.persistence.Basic
 import javax.persistence.GeneratedValue
@@ -7,8 +9,8 @@ import javax.persistence.GenerationType
 import javax.persistence.Id
 
 class TemplateFile() : Serializable {
-    constructor(image: String): this() {
-        this.image = image
+    constructor(imageId: String): this() {
+        this.imageId = imageId
     }
 
     @Id
@@ -16,5 +18,9 @@ class TemplateFile() : Serializable {
     var id: Int? = null
 
     @Basic
-    var image: String? = null
+    var imageId: String? = null
+
+    var name: String? = null
+
+    var extension: String? = null
 }

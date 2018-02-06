@@ -4,7 +4,6 @@ import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.apache.logging.log4j.LogManager
-import org.springframework.beans.factory.annotation.Value
 import spark.Spark.*
 import java.util.*
 
@@ -14,7 +13,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
     path("/templates") {
         get("") { req, res ->
             logger.info("GET All request handled")
-            setJsonContentType(res)
+            res.setJsonContentType()
             jsonTransformer.toJson(templateDao.get())
         }
         get("/:id") { req, res ->
@@ -27,20 +26,25 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
                 res.status(404)
                 ""
             } else {
-                setJsonContentType(res)
+                res.setJsonContentType()
                 jsonTransformer.toJson(template)
             }
         }
         post("") { req, res ->
             val template = jsonTransformer.fromJson(req.body(), TemplateFile::class.java)
 
-            template.image = baseUrl + "/images/" + UUID.randomUUID()
+            if (template.extension != null) {
+                template.imageId = "tm" + UUID.randomUUID().toString()
+                templateDao.save(template)
 
-            res.status(201)
-            setJsonContentType(res)
-            res.header("Location", template.image)
-            jsonTransformer.toJson(template)
+                res.status(201)
+                res.setJsonContentType()
+                res.header("Location", "$baseUrl/images/${template.imageId}.${template.extension}")
+                jsonTransformer.toJson(template)
+            } else {
+                res.status(400)
+                ""
+            }
         }
     }
-
 }

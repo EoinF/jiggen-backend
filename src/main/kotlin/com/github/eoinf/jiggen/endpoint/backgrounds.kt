@@ -3,9 +3,11 @@ package com.github.eoinf.jiggen.endpoint
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.data.BackgroundFile
+import com.github.eoinf.jiggen.data.TemplateFile
 import org.apache.logging.log4j.LogManager
-import spark.Spark.get
-import spark.Spark.path
+import spark.Spark
+import spark.Spark.*
+import java.util.*
 
 private val logger = LogManager.getLogger()
 
@@ -13,7 +15,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
     path("/backgrounds") {
         get("") { req, res ->
             logger.info("GET All request handled")
-            setJsonContentType(res)
+            res.setJsonContentType()
             jsonTransformer.toJson(backgroundDao.get())
         }
         get("/:id") { req, res ->
@@ -26,8 +28,24 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
                 res.status(404)
                 ""
             } else {
-                setJsonContentType(res)
+                res.setJsonContentType()
                 jsonTransformer.toJson(background)
+            }
+        }
+
+        post("") { req, res ->
+            val background = jsonTransformer.fromJson(req.body(), BackgroundFile::class.java)
+
+            if (background.extension != null) {
+                background.imageId = "tm" + UUID.randomUUID().toString()
+                backgroundDao.save(background)
+                res.status(201)
+                res.setJsonContentType()
+                res.header("Location", "$baseUrl/images/${background.imageId}.${background.extension}")
+                jsonTransformer.toJson(background)
+            } else {
+                res.status(400)
+                ""
             }
         }
     }

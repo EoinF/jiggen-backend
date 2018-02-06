@@ -1,5 +1,6 @@
 package com.github.eoinf.jiggen.endpoint
 
+import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IImageDao
 import org.apache.logging.log4j.LogManager
 import spark.Spark.*
@@ -7,34 +8,58 @@ import java.io.File
 
 private val logger = LogManager.getLogger()
 
-fun imagesEndpoint(imageDao: IImageDao) {
+data class FileWithExtension(val id: String, val extension: String)
+
+fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
     path("/images") {
+
+        exception(IndexOutOfBoundsException::class.java) { e, req, res ->
+            e.printStackTrace()
+            res.status(400)
+            res.body(jsonTransformer.toJson(
+                    mapOf("error" to "" +
+                            """Expected path parameter in the format <id>.<extension>
+                                e.g. /images/1234.png
+                            """
+                    ))
+            )
+        }
+
         get("") { req, res ->
             logger.info("GET All request handled")
             "Please use the /templates or /backgrounds endpoints to upload images"
         }
-        get("/:id") { req, res ->
-            logger.info("GET request handled {}", req.params(":id"))
-            val id = req.params(":id")
+        get("/:file") { req, res ->
+            logger.info("GET request handled {}", req.params(":file"))
 
-            val image: File? = imageDao.get(id)
+            val fileParts = req.params(":file")
+                    .split('.')
+            val id = fileParts[0]
+            val ext = fileParts[1]
+
+            val image: File? = imageDao.get(id, ext)
 
             if (image == null) {
                 res.status(404)
                 ""
             } else {
-                setPNGContentType(res)
+                res.setImageContentType(ext)
                 image.inputStream()
             }
         }
 
-        put("/:id") {
+        put("/:file") {
             req, res ->
-            logger.info("GET request handled {}", req.params(":id"))
-            val id = req.params(":id")
+            logger.info("PUT request handled {}", req.params(":id"))
 
-            imageDao.save(id, req.raw().getPart("uploaded_file").inputStream)
+            val fileParts = req.params(":file")
+                    .split('.')
+            val id = fileParts[0]
+            val ext = fileParts[1]
+
+            imageDao.save(id, ext, req.raw().inputStream)
             res.status(201)
+            ""
         }
     }
 
