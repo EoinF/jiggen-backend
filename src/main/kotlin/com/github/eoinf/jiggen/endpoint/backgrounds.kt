@@ -20,7 +20,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
         }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
-            val id = req.params(":id").toIntOrNull()
+            val id = UUID.fromString(req.params(":id"))
 
             val background: BackgroundFile? = backgroundDao.get(id)
 
@@ -37,7 +37,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
             val background = jsonTransformer.fromJson(req.body(), BackgroundFile::class.java)
 
             if (background.extension != null) {
-                background.imageId = "tm" + UUID.randomUUID().toString()
+                background.imageId = UUID.randomUUID()
                 backgroundDao.save(background)
                 res.status(201)
                 res.setJsonContentType()

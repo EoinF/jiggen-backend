@@ -9,6 +9,7 @@ buildscript {
     var gson_version: String by extra
     var log4j_version: String by extra
     var jiggen_version: String by extra
+    var gdx_version: String by extra
 
     val spring_boot_version = "1.5.9.RELEASE"
     kotlin_version = "1.2.10"
@@ -16,6 +17,7 @@ buildscript {
     gson_version = "2.8.2"
     log4j_version = "2.9.0"
     jiggen_version = "1.0"
+    gdx_version = "1.9.8"
 
     repositories {
         mavenCentral()
@@ -39,6 +41,7 @@ val spark_version: String by extra
 val gson_version: String by extra
 val log4j_version: String by extra
 val jiggen_version: String by extra
+val gdx_version: String by extra
 
 repositories {
     mavenCentral()
@@ -59,6 +62,10 @@ dependencies {
     compile(group="org.apache.logging.log4j", name="log4j-api", version=log4j_version)
 
     compile(group="com.github.eoinf.jiggen", name="core", version=jiggen_version)
+
+    // Required for the texture packer
+    compile(group="com.badlogicgames.gdx", name="gdx-platform", version=gdx_version, classifier="natives-desktop")
+    compile(group="com.badlogicgames.gdx", name="gdx-tools", version=gdx_version)
 }
 
 tasks.withType<KotlinCompile> {

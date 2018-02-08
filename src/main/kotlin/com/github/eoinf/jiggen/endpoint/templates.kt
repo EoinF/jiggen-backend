@@ -18,7 +18,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
         }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
-            val id = req.params(":id").toIntOrNull()
+            val id = UUID.fromString(req.params(":id"))
 
             val template: TemplateFile? = templateDao.get(id)
 
@@ -34,7 +34,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
             val template = jsonTransformer.fromJson(req.body(), TemplateFile::class.java)
 
             if (template.extension != null) {
-                template.imageId = "tm" + UUID.randomUUID().toString()
+                template.imageId = UUID.randomUUID()
                 templateDao.save(template)
 
                 res.status(201)

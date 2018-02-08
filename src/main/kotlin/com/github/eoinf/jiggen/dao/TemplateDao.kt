@@ -3,18 +3,18 @@ package com.github.eoinf.jiggen.dao
 import com.github.eoinf.jiggen.TemplateRepository
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.*
 
 interface ITemplateDao {
     fun get() : Array<TemplateFile>
-    fun get(id: Int?) : TemplateFile?
+    fun get(id: UUID?) : TemplateFile?
     fun save(template: TemplateFile) : TemplateFile
-    fun findByImageId(id: String): TemplateFile?
 }
 
 class TemplateRepoDao : ITemplateDao {
     @Autowired lateinit var templateRepository: TemplateRepository
 
-    override fun get(id: Int?) : TemplateFile? {
+    override fun get(id: UUID?) : TemplateFile? {
         return templateRepository.findOne(id)
     }
 
@@ -24,9 +24,5 @@ class TemplateRepoDao : ITemplateDao {
 
     override fun save(template: TemplateFile) : TemplateFile {
         return templateRepository.save(template)
-    }
-
-    override fun findByImageId(id: String): TemplateFile? {
-        return templateRepository.findByImageId(id)
     }
 }

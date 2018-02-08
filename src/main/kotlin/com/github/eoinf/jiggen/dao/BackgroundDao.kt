@@ -3,18 +3,18 @@ package com.github.eoinf.jiggen.dao
 import com.github.eoinf.jiggen.BackgroundRepository
 import com.github.eoinf.jiggen.data.BackgroundFile
 import org.springframework.beans.factory.annotation.Autowired
+import java.util.*
 
 interface IBackgroundDao {
     fun get() : Array<BackgroundFile>
-    fun get(id: Int?) : BackgroundFile?
+    fun get(id: UUID?) : BackgroundFile?
     fun save(background: BackgroundFile) : BackgroundFile
-    fun findByImageId(id: String): BackgroundFile?
 }
 
 class BackgroundRepoDao : IBackgroundDao {
     @Autowired lateinit var backgroundRepository: BackgroundRepository
 
-    override fun get(id: Int?) : BackgroundFile? {
+    override fun get(id: UUID?) : BackgroundFile? {
         return backgroundRepository.findOne(id)
     }
 
@@ -24,9 +24,5 @@ class BackgroundRepoDao : IBackgroundDao {
 
     override fun save(background: BackgroundFile) : BackgroundFile {
         return backgroundRepository.save(background)
-    }
-
-    override fun findByImageId(id: String): BackgroundFile? {
-        return backgroundRepository.findByImageId(id)
     }
 }

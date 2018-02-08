@@ -1,5 +1,12 @@
 package com.github.eoinf.jiggen
 
+import com.badlogic.gdx.Gdx
+import com.badlogic.gdx.files.FileHandle
+import com.badlogic.gdx.graphics.Pixmap
+import com.badlogic.gdx.graphics.Texture
+import com.badlogic.gdx.utils.GdxNativesLoader
+import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
+import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
 import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.dao.IImageDao
 import com.github.eoinf.jiggen.dao.IPuzzleDao
@@ -7,7 +14,6 @@ import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.endpoint.*
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.core.task.AsyncListenableTaskExecutor
 import spark.Spark.get
 import spark.Spark.exception
 import spark.servlet.SparkApplication
@@ -32,6 +38,9 @@ class Application(
 
     override fun init() {
         logger.info("Application::init: Initializing Application")
+
+        // Required for using gdx tools (e.g. Pixmaps)
+        GdxNativesLoader.load()
 
         exception(Exception::class.java) { e, req, res ->
             e.printStackTrace()

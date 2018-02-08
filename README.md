@@ -29,28 +29,33 @@ The war file is generated in:
 4. Install tomcat8
 
         sudo yum install tomcat8
-        
-5. Add the war file to tomcat8 in directory:
+
+5. Create app data folder and set permissions
+
+        sudo mkdir /var/lib/jiggen
+        sudo chown ec2-user /var/lib/jiggen
+
+6. Add the war file to tomcat8 in directory:
 
         /usr/share/tomcat8/webapps
         
     NOTE: It automatically unpackages the war file and creates a directory using 
     the name of the war file
 
-6. Install mysql-server
+7. Install mysql-server
 
-7. Create the database with an sql user:
+8. Create the database with an sql user:
         
         mysql> create database db_jiggen;
         mysql> create user 'springuser'@'localhost' identified by 'ThePassword';
         mysql> grant all on db_jiggen.* to 'springuser'@'localhost';
 
-8. Revoke permissions on the sql user, to protect against attacks
+9. Revoke permissions on the sql user, to protect against attacks
 
         mysql> revoke all on db_jiggen.* from 'springuser'@'localhost';
         mysql> grant select, insert, delete, update on db_jiggen.*
 
-9. Inside webapps/jiggen-backend/WEB-INF/classes/application.properties, change the following line:
+10. Inside webapps/jiggen-backend/WEB-INF/classes/application.properties, change the following line:
 
         spring.jpa.hibernate.ddl-auto=create
     

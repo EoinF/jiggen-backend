@@ -6,6 +6,7 @@ package com.github.eoinf.jiggen;
 import com.github.eoinf.jiggen.data.BackgroundFile;
 import org.springframework.data.repository.CrudRepository;
 
-public interface BackgroundRepository extends CrudRepository<BackgroundFile, Integer> {
-    BackgroundFile findByImageId(String imageId);
+import java.util.UUID;
+
+public interface BackgroundRepository extends CrudRepository<BackgroundFile, UUID> {
 }

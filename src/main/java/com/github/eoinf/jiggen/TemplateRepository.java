@@ -6,6 +6,7 @@ package com.github.eoinf.jiggen;
 import com.github.eoinf.jiggen.data.TemplateFile;
 import org.springframework.data.repository.CrudRepository;
 
-public interface TemplateRepository extends CrudRepository<TemplateFile, Integer> {
-    TemplateFile findByImageId(String imageId);
+import java.util.UUID;
+
+public interface TemplateRepository extends CrudRepository<TemplateFile, UUID> {
 }

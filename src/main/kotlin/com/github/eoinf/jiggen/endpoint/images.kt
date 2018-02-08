@@ -5,10 +5,9 @@ import com.github.eoinf.jiggen.dao.IImageDao
 import org.apache.logging.log4j.LogManager
 import spark.Spark.*
 import java.io.File
+import java.util.*
 
 private val logger = LogManager.getLogger()
-
-data class FileWithExtension(val id: String, val extension: String)
 
 fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
     path("/images") {
@@ -34,7 +33,7 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
 
             val fileParts = req.params(":file")
                     .split('.')
-            val id = fileParts[0]
+            val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
 
             val image: File? = imageDao.get(id, ext)
@@ -50,11 +49,11 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
 
         put("/:file") {
             req, res ->
-            logger.info("PUT request handled {}", req.params(":id"))
+            logger.info("PUT request handled {}", req.params(":file"))
 
             val fileParts = req.params(":file")
                     .split('.')
-            val id = fileParts[0]
+            val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
 
             imageDao.save(id, ext, req.raw().inputStream)
