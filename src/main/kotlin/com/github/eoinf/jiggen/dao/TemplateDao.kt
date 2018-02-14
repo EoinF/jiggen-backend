@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
 interface ITemplateDao {
-    fun get() : Array<TemplateFile>
+    fun get() : List<TemplateFile>
     fun get(id: UUID?) : TemplateFile?
     fun save(template: TemplateFile) : TemplateFile
 }
@@ -18,8 +18,8 @@ class TemplateRepoDao : ITemplateDao {
         return templateRepository.findOne(id)
     }
 
-    override fun get() : Array<TemplateFile> {
-        return templateRepository.findAll().toList().toTypedArray()
+    override fun get() : List<TemplateFile> {
+        return templateRepository.findAll().toList()
     }
 
     override fun save(template: TemplateFile) : TemplateFile {

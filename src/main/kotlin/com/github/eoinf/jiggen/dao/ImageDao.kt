@@ -40,11 +40,6 @@ class ImageDao(private val imageFolder: String, private val templateDao: ITempla
     }
 
     private fun hasMatchingResource(id: UUID): Any? {
-        val template = templateDao.get(id)
-        if (template != null) {
-            return template
-        } else {
-            return backgroundDao.get(id)
-        }
+        return templateDao.get(id) ?: backgroundDao.get(id)
     }
 }

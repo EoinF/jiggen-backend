@@ -8,7 +8,7 @@ import javax.persistence.Id
 class TemplateFile(
         @Basic
         @Id
-        var imageId: UUID
+        var id: UUID
 ) : Serializable {
     var name: String? = null
     var extension: String? = null

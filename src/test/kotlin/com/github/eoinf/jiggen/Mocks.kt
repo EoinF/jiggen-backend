@@ -1,33 +1,31 @@
 package com.github.eoinf.jiggen
 
 import com.github.eoinf.jiggen.dao.IBackgroundDao
-import com.github.eoinf.jiggen.dao.IGeneratedTemplateDao
+import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
 import com.github.eoinf.jiggen.dao.IPuzzleDao
 import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.data.BackgroundFile
 import com.github.eoinf.jiggen.data.FinishedPuzzle
-import com.github.eoinf.jiggen.data.GeneratedTemplate
+import com.github.eoinf.jiggen.data.PuzzleTemplate
 import com.github.eoinf.jiggen.data.TemplateFile
 import java.util.*
 
-val SHARED_TEMPLATE_ID = "6bca5f64-10a7-4cb0-a72b-6f4bc350f04d"
+const val SHARED_TEMPLATE_ID = "6bca5f64-10a7-4cb0-a72b-6f4bc350f04d"
 
 class TestPuzzleDao : IPuzzleDao {
-    private var idInc = 1
-    private val puzzles = HashMap<Int, FinishedPuzzle>()
+    private val puzzles = HashMap<UUID, FinishedPuzzle>()
 
-    override fun get(): Array<FinishedPuzzle> {
-        return puzzles.values.toList().toTypedArray()
+    override fun get(): List<FinishedPuzzle> {
+        return puzzles.values.toList()
     }
 
-    override fun get(id: Int?): FinishedPuzzle? {
+    override fun get(id: UUID?): FinishedPuzzle? {
         return puzzles[id]
     }
 
     override fun save(puzzle: FinishedPuzzle) : FinishedPuzzle {
-        val newId = idInc++
-        puzzle.id = newId
-        puzzles[newId] = puzzle
+        puzzle.id = UUID.randomUUID()
+        puzzles[puzzle.id] = puzzle
         return puzzle
     }
 }
@@ -35,8 +33,8 @@ class TestPuzzleDao : IPuzzleDao {
 class TestTemplateDao : ITemplateDao {
     private val templates = HashMap<UUID, TemplateFile>()
 
-    override fun get(): Array<TemplateFile> {
-        return templates.values.toList().toTypedArray()
+    override fun get(): List<TemplateFile> {
+        return templates.values.toList()
     }
 
     override fun get(id: UUID?): TemplateFile? {
@@ -44,7 +42,7 @@ class TestTemplateDao : ITemplateDao {
     }
 
     override fun save(template: TemplateFile) : TemplateFile {
-        templates[template.imageId!!] = template
+        templates[template.id] = template
         return template
     }
 
@@ -57,8 +55,8 @@ class TestTemplateDao : ITemplateDao {
 class TestBackgroundDao : IBackgroundDao {
     private val backgrounds = HashMap<UUID, BackgroundFile>()
 
-    override fun get(): Array<BackgroundFile> {
-        return backgrounds.values.toList().toTypedArray()
+    override fun get(): List<BackgroundFile> {
+        return backgrounds.values.toList()
     }
 
     override fun get(id: UUID?): BackgroundFile? {
@@ -66,7 +64,7 @@ class TestBackgroundDao : IBackgroundDao {
     }
 
     override fun save(background: BackgroundFile) : BackgroundFile {
-        backgrounds[background.imageId] = background
+        backgrounds[background.id] = background
         return background
     }
 
@@ -75,15 +73,23 @@ class TestBackgroundDao : IBackgroundDao {
     }
 }
 
-class TestGeneratedTemplateDao : IGeneratedTemplateDao {
-    private val gtemplates = HashMap<UUID, GeneratedTemplate>()
+class TestPuzzleTemplateDao : IPuzzleTemplateDao {
+    private val puzzleTemplates = HashMap<UUID, PuzzleTemplate>()
 
-    override fun get(id: UUID?): GeneratedTemplate? {
-        return gtemplates[id]
+    override fun get(): List<PuzzleTemplate> {
+        return puzzleTemplates.values.toList()
     }
 
-    override fun save(generatedTemplate: GeneratedTemplate) : GeneratedTemplate{
-        gtemplates[generatedTemplate.templateFile.imageId] = generatedTemplate
-        return generatedTemplate
+    override fun get(id: UUID?): PuzzleTemplate? {
+        return puzzleTemplates[id]
+    }
+
+    override fun getByTemplateId(templateId: UUID?) : List<PuzzleTemplate> {
+        return puzzleTemplates.values.filter { it.templateFile.id == templateId}
+    }
+
+    override fun save(puzzleTemplate: PuzzleTemplate) : PuzzleTemplate {
+        puzzleTemplates[puzzleTemplate.id] = puzzleTemplate
+        return puzzleTemplate
     }
 }

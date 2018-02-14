@@ -1,23 +1,33 @@
 package com.github.eoinf.jiggen.dao
 
-import com.github.eoinf.jiggen.GeneratedTemplateRepository
-import com.github.eoinf.jiggen.data.GeneratedTemplate
+import com.github.eoinf.jiggen.PuzzleTemplateRepository
+import com.github.eoinf.jiggen.data.PuzzleTemplate
 import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
-interface IGeneratedTemplateDao {
-    fun get(id: UUID?) : GeneratedTemplate?
-    fun save(generatedTemplate: GeneratedTemplate) : GeneratedTemplate?
+interface IPuzzleTemplateDao {
+    fun get(): List<PuzzleTemplate>
+    fun get(id: UUID?) : PuzzleTemplate?
+    fun save(puzzleTemplate: PuzzleTemplate) : PuzzleTemplate?
+    fun getByTemplateId(templateId: UUID?): List<PuzzleTemplate>
 }
 
-class GeneratedTemplateDao : IGeneratedTemplateDao {
-    @Autowired lateinit var generatedTemplatedRepository: GeneratedTemplateRepository
+class PuzzleTemplateDao : IPuzzleTemplateDao {
+    @Autowired lateinit var puzzleTemplateRepository: PuzzleTemplateRepository
 
-    override fun get(id: UUID?): GeneratedTemplate? {
-        return generatedTemplatedRepository.findOne(id)
+    override fun get(): List<PuzzleTemplate> {
+        return puzzleTemplateRepository.findAll().toList()
     }
 
-    override fun save(generatedTemplate: GeneratedTemplate): GeneratedTemplate? {
-        return generatedTemplatedRepository.save(generatedTemplate)
+    override fun get(id: UUID?): PuzzleTemplate? {
+        return puzzleTemplateRepository.findOne(id)
+    }
+
+    override fun save(puzzleTemplate: PuzzleTemplate): PuzzleTemplate? {
+        return puzzleTemplateRepository.save(puzzleTemplate)
+    }
+
+    override fun getByTemplateId(templateId: UUID?): List<PuzzleTemplate> {
+        return puzzleTemplateRepository.findByTemplateId(templateId)
     }
 }

@@ -34,12 +34,12 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
             val template = jsonTransformer.fromJson(req.body(), TemplateFile::class.java)
 
             if (template.extension != null) {
-                template.imageId = UUID.randomUUID()
+                template.id = UUID.randomUUID()
                 templateDao.save(template)
 
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", "$baseUrl/images/${template.imageId}.${template.extension}")
+                res.header("Location", "$baseUrl/images/${template.id}.${template.extension}")
                 jsonTransformer.toJson(template)
             } else {
                 res.status(400)

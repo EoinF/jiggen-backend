@@ -2,14 +2,14 @@ package com.github.eoinf.jiggen.data
 
 import java.io.Serializable
 import java.time.LocalDateTime
+import java.util.*
 import javax.persistence.*
 
 @Entity
-class FinishedPuzzle : Serializable {
-    @Id
-    @GeneratedValue(strategy= GenerationType.AUTO)
-    var id: Int? = null
-
+class FinishedPuzzle(
+        @Id
+        var id: UUID
+) : Serializable {
     @Basic
     var template: TemplateFile? = null
 

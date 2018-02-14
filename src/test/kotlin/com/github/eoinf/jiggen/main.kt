@@ -13,12 +13,12 @@ fun main(args: Array<String>) {
     val templateDao = TestTemplateDao()
     val backgroundDao = TestBackgroundDao()
     val executorService = Executors.newSingleThreadExecutor()
-    val generatedTemplateDao = TestGeneratedTemplateDao()
+    val puzzleTemplateDao = TestPuzzleTemplateDao()
 
-    val taskRunner = GeneratedTaskRunner(executorService, imagesFolder, atlasFolder, generatedTemplateDao)
+    val taskRunner = GeneratedTaskRunner(executorService, imagesFolder, atlasFolder, puzzleTemplateDao)
 
     val app = Application(TestPuzzleDao(), templateDao, backgroundDao,
-            ImageDao(imagesFolder, templateDao, backgroundDao, taskRunner), JsonTransformer())
+            ImageDao(imagesFolder, templateDao, backgroundDao, taskRunner), puzzleTemplateDao, JsonTransformer())
     app.baseUrl = "http://localhost:4567"
     app.init()
 }

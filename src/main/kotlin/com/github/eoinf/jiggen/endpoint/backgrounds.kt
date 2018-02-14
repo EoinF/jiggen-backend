@@ -37,11 +37,11 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
             val background = jsonTransformer.fromJson(req.body(), BackgroundFile::class.java)
 
             if (background.extension != null) {
-                background.imageId = UUID.randomUUID()
+                background.id = UUID.randomUUID()
                 backgroundDao.save(background)
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", "$baseUrl/images/${background.imageId}.${background.extension}")
+                res.header("Location", "$baseUrl/images/${background.id}.${background.extension}")
                 jsonTransformer.toJson(background)
             } else {
                 res.status(400)

@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import java.util.*
 
 interface IBackgroundDao {
-    fun get() : Array<BackgroundFile>
+    fun get() : List<BackgroundFile>
     fun get(id: UUID?) : BackgroundFile?
     fun save(background: BackgroundFile) : BackgroundFile
 }
@@ -18,8 +18,8 @@ class BackgroundRepoDao : IBackgroundDao {
         return backgroundRepository.findOne(id)
     }
 
-    override fun get() : Array<BackgroundFile> {
-        return backgroundRepository.findAll().toList().toTypedArray()
+    override fun get() : List<BackgroundFile> {
+        return backgroundRepository.findAll().toList()
     }
 
     override fun save(background: BackgroundFile) : BackgroundFile {

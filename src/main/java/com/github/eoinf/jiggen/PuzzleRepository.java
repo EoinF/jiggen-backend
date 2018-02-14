@@ -6,6 +6,8 @@ package com.github.eoinf.jiggen;
 import com.github.eoinf.jiggen.data.FinishedPuzzle;
 import org.springframework.data.repository.CrudRepository;
 
-public interface PuzzleRepository extends CrudRepository<FinishedPuzzle, Integer> {
+import java.util.UUID;
+
+public interface PuzzleRepository extends CrudRepository<FinishedPuzzle, UUID> {
 
 }

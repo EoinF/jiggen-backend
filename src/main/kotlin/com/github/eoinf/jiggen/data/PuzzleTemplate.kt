@@ -3,14 +3,13 @@ package com.github.eoinf.jiggen.data
 import java.util.*
 import javax.persistence.*
 
-class GeneratedTemplate(
-        var packedImageId: UUID,
+class PuzzleTemplate(
         @Id
-        @OneToOne
-        @JoinColumn(name="imageId")
+        var id: UUID,
+
+        @OneToMany
+        @JoinColumn(name="id")
         var templateFile: TemplateFile
 ) {
-    var extension : String? = null
     var atlasDetails: String? = null
-
 }

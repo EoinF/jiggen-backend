@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.utils.GdxNativesLoader
 import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
-import com.github.eoinf.jiggen.dao.IBackgroundDao
-import com.github.eoinf.jiggen.dao.IImageDao
-import com.github.eoinf.jiggen.dao.IPuzzleDao
-import com.github.eoinf.jiggen.dao.ITemplateDao
+import com.github.eoinf.jiggen.dao.*
 import com.github.eoinf.jiggen.endpoint.*
 import org.apache.logging.log4j.LogManager
 import org.springframework.beans.factory.annotation.Value
@@ -28,6 +25,7 @@ class Application(
         private val templateDao: ITemplateDao,
         private val backgroundDao: IBackgroundDao,
         private val imageDao: IImageDao,
+        private val puzzleTemplateDao: IPuzzleTemplateDao,
         private val jsonTransformer: JsonTransformer)
     : SparkApplication {
 
@@ -54,9 +52,9 @@ class Application(
 
         get("/") { _, _ -> "This resource manages templates and cached puzzles for the jiggen game" }
 
-        puzzlesEndpoint(puzzleDao, jsonTransformer, baseUrl)
         templatesEndpoint(templateDao, jsonTransformer, baseUrl)
         backgroundsEndpoint(backgroundDao, jsonTransformer, baseUrl)
         imagesEndpoint(imageDao, jsonTransformer)
+        puzzleTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
     }
 }
