@@ -47,8 +47,10 @@ class TestTemplateDao : ITemplateDao {
     }
 
     init {
-        this.save(TemplateFile(UUID.fromString(SHARED_TEMPLATE_ID)))
-        this.save(TemplateFile(UUID.fromString("a3206515-0692-4a9b-9db7-8ad4ffc4b0aa")))
+        this.save(TemplateFile(
+                name="template 1",
+                id=UUID.fromString(SHARED_TEMPLATE_ID),
+                extension = "png"))
     }
 }
 

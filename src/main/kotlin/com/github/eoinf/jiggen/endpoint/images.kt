@@ -11,7 +11,6 @@ private val logger = LogManager.getLogger()
 
 fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
     path("/images") {
-
         exception(IndexOutOfBoundsException::class.java) { e, req, res ->
             e.printStackTrace()
             res.status(400)

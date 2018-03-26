@@ -8,8 +8,7 @@ import javax.persistence.Id
 class TemplateFile(
         @Basic
         @Id
-        var id: UUID
-) : Serializable {
-    var name: String? = null
-    var extension: String? = null
-}
+        var id: UUID,
+        var name: String? = null,
+        var extension: String? = null
+) : Serializable

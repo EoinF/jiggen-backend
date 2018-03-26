@@ -3,7 +3,6 @@ package com.github.eoinf.jiggen.tasks
 import com.badlogic.gdx.files.FileHandle
 import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.PixmapIO
-import com.badlogic.gdx.graphics.Texture
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
 import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory

@@ -8,8 +8,16 @@ import java.util.concurrent.Executors
     Entry point for running the app locally for dev testing
  */
 fun main(args: Array<String>) {
-    val imagesFolder = "/var/lib/jiggen/images"
-    val atlasFolder = "/var/lib/jiggen/atlas"
+    val imagesFolder: String
+    val atlasFolder: String
+
+    if (System.getProperty("os.name").contains("Windows")) {
+        imagesFolder = System.getenv("APPDATA") + "\\jiggen\\images"
+        atlasFolder = System.getenv("APPDATA") + "\\jiggen\\atlas"
+    } else {
+        imagesFolder = "/var/lib/jiggen/images"
+        atlasFolder = "/var/lib/jiggen/atlas"
+    }
     val templateDao = TestTemplateDao()
     val backgroundDao = TestBackgroundDao()
     val executorService = Executors.newSingleThreadExecutor()

@@ -1,9 +1,9 @@
-#Instructions for compiling and deploying this app
+# Instructions for compiling and deploying this app
 
 These are instructions for getting the web app up and running.
 Using docker is the next step, but for now it is all done manually.
 
-####Compiling the WAR file
+#### Compiling the WAR file
 
 Simply run
 
@@ -13,7 +13,7 @@ The war file is generated in:
 
         build/libs
 
-####Installing on AWS EC2 instance
+#### Installing on AWS EC2 instance
 
 1. On AWS launch the basic 64 bit amazon AMI
 2. Connect using:

@@ -48,6 +48,7 @@ class Application(
                             mapOf("error" to e.message)
                     )
             )
+            res.status(500)
         }
 
         get("/") { _, _ -> "This resource manages templates and cached puzzles for the jiggen game" }
