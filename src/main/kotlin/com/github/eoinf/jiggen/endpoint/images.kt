@@ -3,8 +3,10 @@ package com.github.eoinf.jiggen.endpoint
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IImageDao
 import org.apache.logging.log4j.LogManager
+import org.eclipse.jetty.http.HttpStatus
 import spark.Spark.*
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.*
 
 private val logger = LogManager.getLogger()
@@ -12,8 +14,8 @@ private val logger = LogManager.getLogger()
 fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
     path("/images") {
         exception(IndexOutOfBoundsException::class.java) { e, req, res ->
-            e.printStackTrace()
-            res.status(400)
+            logger.error("/images endpoint: ", e)
+            res.status(HttpStatus.BAD_REQUEST_400)
             res.body(jsonTransformer.toJson(
                     mapOf("error" to "" +
                             """Expected path parameter in the format <id>.<extension>
@@ -21,6 +23,11 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
                             """
                     ))
             )
+        }
+        exception(FileNotFoundException::class.java) {e, req, res ->
+            logger.error("/images endpoint: ", e)
+            res.status(HttpStatus.NOT_FOUND_404)
+            res.body("")
         }
 
         get("") { req, res ->
@@ -35,15 +42,10 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
             val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
 
-            val image: File? = imageDao.get(id, ext)
+            val image: File = imageDao.get(id, ext)
 
-            if (image == null) {
-                res.status(404)
-                ""
-            } else {
-                res.setImageContentType(ext)
-                image.inputStream()
-            }
+            res.setImageContentType(ext)
+            image.inputStream()
         }
 
         put("/:file") {
@@ -54,9 +56,10 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
                     .split('.')
             val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
-
-            imageDao.save(id, ext, req.raw().inputStream)
-            res.status(201)
+            req.raw().inputStream.use {
+                imageDao.save(id, ext, it)
+            }
+            res.status(HttpStatus.CREATED_201)
             ""
         }
     }

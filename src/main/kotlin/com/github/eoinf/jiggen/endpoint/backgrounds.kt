@@ -3,9 +3,7 @@ package com.github.eoinf.jiggen.endpoint
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.data.BackgroundFile
-import com.github.eoinf.jiggen.data.TemplateFile
 import org.apache.logging.log4j.LogManager
-import spark.Spark
 import spark.Spark.*
 import java.util.*
 

@@ -1,14 +1,19 @@
 package com.github.eoinf.jiggen.tasks
 
-import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
-import java.io.File
+import com.github.eoinf.jiggen.JiggenConfiguration
+import com.github.eoinf.jiggen.dao.PuzzleTemplateDao
+import org.springframework.stereotype.Service
 import java.util.*
 import java.util.concurrent.ExecutorService
 
-class GeneratedTaskRunner(private val executorService: ExecutorService, private val imageFolder: String,
-                          private val atlasFolder: String, private val puzzleTemplateDao: IPuzzleTemplateDao) {
+@Service
+class GeneratedTaskRunner(private val executorService: ExecutorService,
+                          private val jiggenConfiguration: JiggenConfiguration,
+                          private val puzzleTemplateDao: PuzzleTemplateDao) {
 
     fun generateNewTemplate(id: UUID, filePath: String) {
-        executorService.submit(GenerateTemplateTask(id, filePath, imageFolder, atlasFolder, puzzleTemplateDao))
+        executorService.submit(GenerateTemplateTask(
+                id, filePath, jiggenConfiguration.imageFolder, jiggenConfiguration.atlasFolder, puzzleTemplateDao)
+        )
     }
 }

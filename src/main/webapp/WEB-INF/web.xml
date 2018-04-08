@@ -6,7 +6,6 @@
         <init-param>
             <!--
             Pass in the bean id of the main application class
-            The bean is defined in src/main/resources/applicationContext.xml
             -->
             <param-name>applicationClass</param-name>
             <param-value>Application</param-value>

@@ -1,33 +1,39 @@
 package com.github.eoinf.jiggen.dao
 
+import com.github.eoinf.jiggen.JiggenConfiguration
 import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.tasks.GeneratedTaskRunner
-import java.io.*
+import org.springframework.stereotype.Service
+import java.io.File
+import java.io.InputStream
 import java.util.*
 
 interface IImageDao {
-    fun get(id: UUID?, extension: String?) : File?
+    fun get(id: UUID?, extension: String?) : File
     fun save(id: UUID, extension: String, inputStream: InputStream)
 }
 
-class ImageDao(private val imageFolder: String, private val templateDao: ITemplateDao,
+@Service
+class ImageDao(private val config: JiggenConfiguration, private val templateDao: ITemplateDao,
                private val backgroundDao: IBackgroundDao,
                private val generatedTaskRunner: GeneratedTaskRunner) : IImageDao {
-    override fun get(id: UUID?, extension: String?) : File? {
-        return try {
-            File("$imageFolder/$id.$extension")
-        } catch (ex: FileNotFoundException) {
-            null
-        }
+
+
+
+    override fun get(id: UUID?, extension: String?) : File {
+        return File("${config.imageFolder}/$id.$extension")
     }
     override fun save(id: UUID, extension: String, inputStream: InputStream) {
         val resource = hasMatchingResource(id)
 
         if (resource != null) {
-            val file = File("$imageFolder/$id.$extension")
+            val file = File("${config.imageFolder}/$id.$extension")
             file.parentFile.mkdirs()
             file.createNewFile()
-            inputStream.copyTo(file.outputStream())
+
+            file.outputStream().use {
+                inputStream.copyTo(it)
+            }
 
             // If it's a template, we can get the background worker to generate the template puzzle
             if (resource is TemplateFile) {

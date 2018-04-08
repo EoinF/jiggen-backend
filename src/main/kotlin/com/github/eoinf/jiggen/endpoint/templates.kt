@@ -1,6 +1,7 @@
 package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
+import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
 import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.apache.logging.log4j.LogManager
@@ -9,7 +10,8 @@ import java.util.*
 
 private val logger = LogManager.getLogger()
 
-fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransformer, baseUrl: String) {
+fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTemplateDao,
+                      jsonTransformer: JsonTransformer, baseUrl: String) {
     path("/templates") {
         get("") { req, res ->
             logger.info("GET All request handled")
@@ -46,5 +48,33 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
                 ""
             }
         }
+
+        path("/templates/:id/puzzletemplates") {
+            get("") { req, res ->
+                logger.info("GET request handled {}", req.params(":id"))
+                val templateId = UUID.fromString(req.params(":id"))
+                res.setJsonContentType()
+                jsonTransformer.toJson(templateDao.get(templateId)!!.puzzleTemplates)
+            }
+            get("/:ptid") { req, res ->
+                logger.info("GET request handled {}", req.params(":id"))
+                val templateId = UUID.fromString(req.params(":id"))
+                val puzzleTemplateId = UUID.fromString(req.params(":ptid"))
+
+                val puzzleTemplates = puzzleTemplateDao.getByTemplateId(templateId)
+                val template = puzzleTemplates.stream()
+                        .filter { it.id == puzzleTemplateId }
+                        .findFirst()
+
+                if (!template.isPresent) {
+                    res.status(404)
+                    ""
+                } else {
+                    res.setJsonContentType()
+                    jsonTransformer.toJson(template.get())
+                }
+            }
+        }
     }
+
 }

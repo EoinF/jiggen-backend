@@ -1,17 +1,18 @@
 package com.github.eoinf.jiggen.data
 
-import java.io.Serializable
 import java.util.*
-import javax.persistence.Basic
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
+import javax.persistence.Entity
 import javax.persistence.Id
 
+@Entity
 class BackgroundFile(
-        @Basic
-        @Id
-        var id: UUID
-) : Serializable {
-    var name: String? = null
-    var extension: String? = null
+        var name: String? = null,
+        var extension: String? = null
+) {
+    constructor(id: UUID) : this() {
+        this.id = id
+    }
+
+    @Id
+    lateinit var id: UUID
 }

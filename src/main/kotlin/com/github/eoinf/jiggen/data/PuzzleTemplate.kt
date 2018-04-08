@@ -3,13 +3,20 @@ package com.github.eoinf.jiggen.data
 import java.util.*
 import javax.persistence.*
 
-class PuzzleTemplate(
-        @Id
-        var id: UUID,
+@Entity
+class PuzzleTemplate() {
+    @ManyToOne
+    @JoinColumn(name="templateId")
+    lateinit var templateFile: TemplateFile
 
-        @OneToMany
-        @JoinColumn(name="id")
-        var templateFile: TemplateFile
-) {
+    @Lob
     var atlasDetails: String? = null
+
+    constructor(id: UUID, templateFile: TemplateFile): this() {
+        this.id = id
+        this.templateFile = templateFile
+    }
+
+    @Id
+    lateinit var id: UUID
 }

@@ -7,7 +7,7 @@ import com.badlogic.gdx.tools.texturepacker.TexturePacker
 import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraph
-import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
+import com.github.eoinf.jiggen.dao.PuzzleTemplateDao
 import com.github.eoinf.jiggen.data.PuzzleTemplate
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.apache.logging.log4j.LogManager
@@ -16,7 +16,7 @@ import java.util.*
 
 class GenerateTemplateTask(private val imageId: UUID, private val imageLocation: String,
                            private val imageFolder: String, private val atlasFolder: String,
-                           private val puzzleTemplateDao: IPuzzleTemplateDao) : Runnable {
+                           private val puzzleTemplateDao: PuzzleTemplateDao) : Runnable {
 
     private val logger = LogManager.getLogger()
 
@@ -57,11 +57,10 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             logger.info("PuzzleTemplateTask::run Saving resource")
             val savedResource = puzzleTemplateDao.save(puzzleTemplate)
 
-            savedResource ?:
-                    throw Exception("Saved resource was null")
+            savedResource ?: throw Exception("Saved resource was null")
 
             logger.info("Saved generated template $imageId successfully")
-        } catch(ex: Exception) {
+        } catch (ex: Exception) {
             logger.info("PuzzleTemplateTask::run Exception handled")
             logger.error("Failed to save generated template $imageId", ex)
         }
@@ -97,10 +96,12 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
      */
     private fun moveAtlasImageToImagesFolder(srcFolder: String, dstFolder: String, packedImageId: UUID) {
         val srcFile = File("$srcFolder/$packedImageId.png")
-        val dstFile = File("$dstFolder/$packedImageId.png").outputStream()
 
-        srcFile.inputStream()
-                .copyTo(dstFile)
+        srcFile.inputStream().use { input ->
+            File("$dstFolder/$packedImageId.png").outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
     }
 
     private fun deleteTempFiles(tmpFolder: String) {

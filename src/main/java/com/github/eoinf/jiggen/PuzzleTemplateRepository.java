@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface PuzzleTemplateRepository extends CrudRepository<PuzzleTemplate, UUID> {
-    List<PuzzleTemplate> findByTemplateId(UUID id);
+    List<PuzzleTemplate> findByTemplateFile(UUID id);
 }

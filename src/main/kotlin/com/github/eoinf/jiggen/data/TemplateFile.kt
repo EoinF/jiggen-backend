@@ -1,14 +1,22 @@
 package com.github.eoinf.jiggen.data
 
-import java.io.Serializable
 import java.util.*
-import javax.persistence.Basic
+import javax.persistence.Entity
 import javax.persistence.Id
+import javax.persistence.OneToMany
 
-class TemplateFile(
-        @Basic
-        @Id
-        var id: UUID,
+@Entity
+data class TemplateFile(
         var name: String? = null,
         var extension: String? = null
-) : Serializable
+) {
+    @OneToMany
+    //@JoinColumn(name="puzzleTemplates")
+    lateinit var puzzleTemplates: List<PuzzleTemplate>
+    constructor(id: UUID) : this() {
+        this.id = id
+    }
+
+    @Id
+    lateinit var id: UUID
+}
