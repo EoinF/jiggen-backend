@@ -3,7 +3,7 @@ package com.github.eoinf.jiggen.endpoint
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
 import com.github.eoinf.jiggen.dao.ITemplateDao
-import com.github.eoinf.jiggen.data.TemplateFile
+import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import spark.Spark.*
 import java.util.*
@@ -22,7 +22,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTempl
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val template: TemplateFile? = templateDao.get(id)
+            val template: TemplateFileDTO? = templateDao.get(id)
 
             if (template == null) {
                 res.status(404)
@@ -33,7 +33,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTempl
             }
         }
         post("") { req, res ->
-            val template = jsonTransformer.fromJson(req.body(), TemplateFile::class.java)
+            val template = jsonTransformer.fromJson(req.body(), TemplateFileDTO::class.java)
 
             if (template.extension != null) {
                 template.id = UUID.randomUUID()
@@ -48,33 +48,31 @@ fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTempl
                 ""
             }
         }
+    }
+    path("/templates/:id/puzzletemplates") {
+        get("") { req, res ->
+            logger.info("GET request handled {}", req.params(":id"))
+            val templateId = UUID.fromString(req.params(":id"))
+            res.setJsonContentType()
+            jsonTransformer.toJson(templateDao.get(templateId)!!.puzzleTemplates)
+        }
+        get("/:ptid") { req, res ->
+            logger.info("GET request handled {}", req.params(":id"))
+            val templateId = UUID.fromString(req.params(":id"))
+            val puzzleTemplateId = UUID.fromString(req.params(":ptid"))
 
-        path("/templates/:id/puzzletemplates") {
-            get("") { req, res ->
-                logger.info("GET request handled {}", req.params(":id"))
-                val templateId = UUID.fromString(req.params(":id"))
+            val puzzleTemplates = puzzleTemplateDao.getByTemplateId(templateId)
+            val template = puzzleTemplates.stream()
+                    .filter { it.id == puzzleTemplateId }
+                    .findFirst()
+
+            if (!template.isPresent) {
+                res.status(404)
+                ""
+            } else {
                 res.setJsonContentType()
-                jsonTransformer.toJson(templateDao.get(templateId)!!.puzzleTemplates)
-            }
-            get("/:ptid") { req, res ->
-                logger.info("GET request handled {}", req.params(":id"))
-                val templateId = UUID.fromString(req.params(":id"))
-                val puzzleTemplateId = UUID.fromString(req.params(":ptid"))
-
-                val puzzleTemplates = puzzleTemplateDao.getByTemplateId(templateId)
-                val template = puzzleTemplates.stream()
-                        .filter { it.id == puzzleTemplateId }
-                        .findFirst()
-
-                if (!template.isPresent) {
-                    res.status(404)
-                    ""
-                } else {
-                    res.setJsonContentType()
-                    jsonTransformer.toJson(template.get())
-                }
+                jsonTransformer.toJson(template.get())
             }
         }
     }
-
 }

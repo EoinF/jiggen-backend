@@ -1,7 +1,7 @@
 package com.github.eoinf.jiggen.dao
 
 import com.github.eoinf.jiggen.JiggenConfiguration
-import com.github.eoinf.jiggen.data.TemplateFile
+import com.github.eoinf.jiggen.data.TemplateFileDTO
 import com.github.eoinf.jiggen.tasks.GeneratedTaskRunner
 import org.springframework.stereotype.Service
 import java.io.File
@@ -36,12 +36,12 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
             }
 
             // If it's a template, we can get the background worker to generate the template puzzle
-            if (resource is TemplateFile) {
+            if (resource is TemplateFileDTO) {
                 generatedTaskRunner.generateNewTemplate(id, file.absolutePath)
             }
         }
         else {
-            throw Exception("Corresponding image entry does not exist")
+            throw NoMatchingResourceEntryException("Corresponding image entry does not exist")
         }
     }
 
@@ -49,3 +49,5 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
         return templateDao.get(id) ?: backgroundDao.get(id)
     }
 }
+
+class NoMatchingResourceEntryException(message: String): Exception(message)

@@ -6,7 +6,7 @@ import javax.persistence.*
 @Entity
 class PuzzleTemplate() {
     @ManyToOne
-    @JoinColumn(name="templateId")
+    @JoinColumn(name="templateId", unique = true, nullable = false)
     lateinit var templateFile: TemplateFile
 
     @Lob
@@ -19,4 +19,23 @@ class PuzzleTemplate() {
 
     @Id
     lateinit var id: UUID
+}
+
+class PuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0) {
+    val id: UUID?
+    val templateFile: TemplateFileDTO?
+
+    @Lob
+    var atlasDetails: String?
+
+    init {
+        id = puzzleTemplate.id
+        atlasDetails = puzzleTemplate.atlasDetails
+
+        if (depth == 0) {
+            templateFile = null
+        } else {
+            templateFile = TemplateFileDTO(puzzleTemplate.templateFile, depth=depth - 1)
+        }
+    }
 }

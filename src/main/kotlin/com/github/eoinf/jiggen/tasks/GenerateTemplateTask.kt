@@ -54,6 +54,8 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
 
+            puzzleTemplate.templateFile = TemplateFile(id=imageId)
+
             logger.info("PuzzleTemplateTask::run Saving resource")
             val savedResource = puzzleTemplateDao.save(puzzleTemplate)
 

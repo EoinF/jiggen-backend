@@ -10,7 +10,3 @@ fun Response.setJsonContentType() {
 fun Response.setImageContentType(extension: String) {
     this.header("Content-Type", "image/$extension")
 }
-
-fun splitFilename(filename: String) : List<String> {
-    return filename.split('.')
-}

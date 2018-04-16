@@ -2,6 +2,7 @@ package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.dao.IImageDao
+import com.github.eoinf.jiggen.dao.NoMatchingResourceEntryException
 import org.apache.logging.log4j.LogManager
 import org.eclipse.jetty.http.HttpStatus
 import spark.Spark.*
@@ -16,18 +17,29 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
         exception(IndexOutOfBoundsException::class.java) { e, req, res ->
             logger.error("/images endpoint: ", e)
             res.status(HttpStatus.BAD_REQUEST_400)
+
+            res.setJsonContentType()
             res.body(jsonTransformer.toJson(
-                    mapOf("error" to "" +
-                            """Expected path parameter in the format <id>.<extension>
-                                e.g. /images/1234.png
-                            """
+                    mapOf("error" to
+                            "Expected path parameter in the format \"<id>.<extension>\" e.g. /images/1234.png"
                     ))
             )
         }
-        exception(FileNotFoundException::class.java) {e, req, res ->
+        exception(FileNotFoundException::class.java) { e, req, res ->
             logger.error("/images endpoint: ", e)
             res.status(HttpStatus.NOT_FOUND_404)
-            res.body("")
+            res.body(null)
+        }
+        exception(NoMatchingResourceEntryException::class.java) { e, req, res ->
+            logger.error("/images endpoint: ", e)
+            res.status(HttpStatus.BAD_REQUEST_400)
+            res.setJsonContentType()
+            res.body(jsonTransformer.toJson(
+                    mapOf("error" to "" +
+                            "Expected corresponding resource to exist. Use /templates or " +
+                            "/backgrounds endpoint to create the metadata first"
+                    ))
+            )
         }
 
         get("") { req, res ->
@@ -48,18 +60,22 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer) {
             image.inputStream()
         }
 
-        put("/:file") {
-            req, res ->
+        put("/:file") { req, res ->
             logger.info("PUT request handled {}", req.params(":file"))
 
             val fileParts = req.params(":file")
                     .split('.')
             val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
-            req.raw().inputStream.use {
-                imageDao.save(id, ext, it)
+
+            if (req.contentLength() == 0) {
+                res.status(HttpStatus.BAD_REQUEST_400)
+            } else {
+                req.raw().inputStream.use {
+                    imageDao.save(id, ext, it)
+                }
+                res.status(HttpStatus.CREATED_201)
             }
-            res.status(HttpStatus.CREATED_201)
             ""
         }
     }
