@@ -1,30 +1,38 @@
 package com.github.eoinf.jiggen.dao
 
 import com.github.eoinf.jiggen.BackgroundRepository
+import com.github.eoinf.jiggen.DataMapper
 import com.github.eoinf.jiggen.data.BackgroundFile
+import com.github.eoinf.jiggen.data.BackgroundFileDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
 
 interface IBackgroundDao {
-    fun get() : List<BackgroundFile>
-    fun get(id: UUID) : BackgroundFile?
-    fun save(background: BackgroundFile) : BackgroundFile
+    fun get() : List<BackgroundFileDTO>
+    fun get(id: UUID) : BackgroundFileDTO?
+    fun save(background: BackgroundFileDTO) : BackgroundFileDTO
 }
 
 @Service
-class BackgroundRepoDao : IBackgroundDao {
+class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
     @Autowired lateinit var backgroundRepository: BackgroundRepository
 
-    override fun get(id: UUID) : BackgroundFile? {
-        return backgroundRepository.findById(id).orElse(null)
+    override fun get(id: UUID) : BackgroundFileDTO? {
+        val backgroundFile = backgroundRepository.findById(id).orElse(null)
+        if (backgroundFile == null)
+            return null
+        else
+            return dataMapper.toBackgroundFileDTO(backgroundFile, depth = 1)
     }
 
-    override fun get() : List<BackgroundFile> {
-        return backgroundRepository.findAll().toList()
+    override fun get() : List<BackgroundFileDTO> {
+        return backgroundRepository.findAll().toList().map {
+            dataMapper.toBackgroundFileDTO(it)
+        }
     }
 
-    override fun save(background: BackgroundFile) : BackgroundFile {
-        return backgroundRepository.save(background)
+    override fun save(background: BackgroundFileDTO) : BackgroundFileDTO {
+        return dataMapper.toBackgroundFileDTO(backgroundRepository.save(BackgroundFile(background)))
     }
 }

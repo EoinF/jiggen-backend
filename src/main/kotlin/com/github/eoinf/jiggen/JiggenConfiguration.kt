@@ -1,7 +1,10 @@
 package com.github.eoinf.jiggen
 
 import org.springframework.boot.context.properties.ConfigurationProperties
+import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 @Configuration
 @ConfigurationProperties(prefix = "jiggen")
@@ -34,4 +37,10 @@ open class JiggenConfiguration {
                 unix!!.atlasFolder!!
             }
         }
+
+
+    @Bean
+    open fun executorService(): ExecutorService {
+        return Executors.newSingleThreadExecutor()
+    }
 }

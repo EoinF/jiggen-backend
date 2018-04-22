@@ -8,8 +8,8 @@ import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraph
 import com.github.eoinf.jiggen.dao.PuzzleTemplateDao
-import com.github.eoinf.jiggen.data.PuzzleTemplate
-import com.github.eoinf.jiggen.data.TemplateFile
+import com.github.eoinf.jiggen.data.PuzzleTemplateDTO
+import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.util.*
@@ -46,15 +46,13 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             val settings = TexturePacker.Settings()
             TexturePacker.process(settings, puzzleFolderName, atlasFolderTempFolder, packedImageId.toString())
 
-            val puzzleTemplate = PuzzleTemplate(packedImageId, TemplateFile(imageId))
             logger.info("PuzzleTemplateTask::run Extracting atlas details")
-
-            puzzleTemplate.atlasDetails = getAtlasFromFolder(atlasFolderTempFolder, packedImageId.toString())
+            val atlasDetails = getAtlasFromFolder(atlasFolderTempFolder, packedImageId.toString())
             moveAtlasImageToImagesFolder(atlasFolderTempFolder, imageFolder, packedImageId)
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
 
-            puzzleTemplate.templateFile = TemplateFile(id=imageId)
+            val puzzleTemplate = PuzzleTemplateDTO(packedImageId, TemplateFileDTO(imageId), atlasDetails)
 
             logger.info("PuzzleTemplateTask::run Saving resource")
             val savedResource = puzzleTemplateDao.save(puzzleTemplate)
@@ -93,8 +91,8 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
     }
 
     /**
-     * Moves the generated atlas image to the images folder so it can be fetched as a resource
-     * from the images endpoint
+     * Moves the generated atlas image to the IMAGES folder so it can be fetched as a resource
+     * from the IMAGES endpoint
      */
     private fun moveAtlasImageToImagesFolder(srcFolder: String, dstFolder: String, packedImageId: UUID) {
         val srcFile = File("$srcFolder/$packedImageId.png")

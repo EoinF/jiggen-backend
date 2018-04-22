@@ -1,5 +1,6 @@
 package com.github.eoinf.jiggen.dao
 
+import com.github.eoinf.jiggen.DataMapper
 import com.github.eoinf.jiggen.TemplateRepository
 import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
@@ -15,7 +16,7 @@ interface ITemplateDao {
 }
 
 @Service
-open class TemplateRepoDao : ITemplateDao {
+open class TemplateRepoDao(private val dataMapper: DataMapper) : ITemplateDao {
     @Autowired lateinit var templateRepository: TemplateRepository
 
     @Transactional
@@ -24,16 +25,16 @@ open class TemplateRepoDao : ITemplateDao {
         if (templateFile == null)
             return null
         else
-            return TemplateFileDTO(templateFile, depth=1)
+            return dataMapper.toTemplateFileDTO(templateFile, depth = 2)
     }
 
     override fun get() : List<TemplateFileDTO> {
         return templateRepository.findAll().toList().map {
-            TemplateFileDTO(it)
+            dataMapper.toTemplateFileDTO(it)
         }
     }
 
     override fun save(template: TemplateFileDTO) : TemplateFileDTO {
-        return TemplateFileDTO(templateRepository.save(TemplateFile(template)))
+        return dataMapper.toTemplateFileDTO(templateRepository.save(TemplateFile(template)))
     }
 }

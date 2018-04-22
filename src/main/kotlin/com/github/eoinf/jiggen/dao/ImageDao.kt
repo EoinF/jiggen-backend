@@ -1,7 +1,9 @@
 package com.github.eoinf.jiggen.dao
 
 import com.github.eoinf.jiggen.JiggenConfiguration
+import com.github.eoinf.jiggen.data.ImageFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
+import com.github.eoinf.jiggen.exception.NoMatchingResourceEntryException
 import com.github.eoinf.jiggen.tasks.GeneratedTaskRunner
 import org.springframework.stereotype.Service
 import java.io.File
@@ -9,7 +11,7 @@ import java.io.InputStream
 import java.util.*
 
 interface IImageDao {
-    fun get(id: UUID?, extension: String?) : File
+    fun get(id: UUID?, extension: String?) : ImageFile
     fun save(id: UUID, extension: String, inputStream: InputStream)
 }
 
@@ -20,8 +22,8 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
 
 
 
-    override fun get(id: UUID?, extension: String?) : File {
-        return File("${config.imageFolder}/$id.$extension")
+    override fun get(id: UUID?, extension: String?) : ImageFile {
+        return ImageFile(id, "${config.imageFolder}/$id.$extension")
     }
     override fun save(id: UUID, extension: String, inputStream: InputStream) {
         val resource = hasMatchingResource(id)
@@ -49,5 +51,3 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
         return templateDao.get(id) ?: backgroundDao.get(id)
     }
 }
-
-class NoMatchingResourceEntryException(message: String): Exception(message)

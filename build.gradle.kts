@@ -84,6 +84,7 @@ tasks.withType<KotlinCompile> {
 }
 
 tasks.withType<War> {
+    enabled = true
     archiveName = "jiggen-backend.war"
     manifest {
         attributes(

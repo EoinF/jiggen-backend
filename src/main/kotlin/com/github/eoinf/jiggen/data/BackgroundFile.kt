@@ -6,13 +6,24 @@ import javax.persistence.Id
 
 @Entity
 class BackgroundFile(
-        var name: String? = null,
-        var extension: String? = null
-) {
-    constructor(id: UUID) : this() {
-        this.id = id
+        @Id private val id: UUID? = null,
+        val name: String? = null,
+        val extension: String? = null
+) : EntityWithId {
+
+    override fun getId(): UUID {
+        return id!!
     }
 
-    @Id
-    lateinit var id: UUID
+    companion object {
+        const val RESOURCE_NAME = "backgrounds"
+    }
+
+    constructor(backgroundFileDTO: BackgroundFileDTO)
+            : this(backgroundFileDTO.id, backgroundFileDTO.name, backgroundFileDTO.extension)
 }
+
+data class BackgroundFileDTO(val id: UUID? = null,
+                             val name: String? = null,
+                             val extension: String? = null,
+                             val links: Map<String, String>)

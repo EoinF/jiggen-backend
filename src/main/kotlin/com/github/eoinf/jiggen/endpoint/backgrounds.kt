@@ -1,16 +1,20 @@
 package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
+import com.github.eoinf.jiggen.ResourceMapper
 import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.data.BackgroundFile
+import com.github.eoinf.jiggen.data.BackgroundFileDTO
 import org.apache.logging.log4j.LogManager
 import spark.Spark.*
 import java.util.*
 
 private val logger = LogManager.getLogger()
 
-fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTransformer, baseUrl: String) {
-    path("/backgrounds") {
+private const val backgrounds = BackgroundFile.RESOURCE_NAME
+
+fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
+    path("/$backgrounds") {
         get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
@@ -20,7 +24,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val background: BackgroundFile? = backgroundDao.get(id)
+            val background: BackgroundFileDTO? = backgroundDao.get(id)
 
             if (background == null) {
                 res.status(404)
@@ -32,15 +36,14 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
         }
 
         post("") { req, res ->
-            val background = jsonTransformer.fromJson(req.body(), BackgroundFile::class.java)
+            val background = jsonTransformer.fromJson(req.body(), BackgroundFileDTO::class.java)
 
             if (background.extension != null) {
-                background.id = UUID.randomUUID()
-                backgroundDao.save(background)
+                val result = backgroundDao.save(background.copy(id= UUID.randomUUID()))
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", "$baseUrl/images/${background.id}.${background.extension}")
-                jsonTransformer.toJson(background)
+                res.header("Location", resourceMapper.imagesUrl(result.id!!, background.extension))
+                jsonTransformer.toJson(result)
             } else {
                 res.status(400)
                 ""

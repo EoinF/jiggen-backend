@@ -1,8 +1,10 @@
 package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
-import com.github.eoinf.jiggen.dao.IPuzzleTemplateDao
+import com.github.eoinf.jiggen.ResourceMapper
 import com.github.eoinf.jiggen.dao.ITemplateDao
+import com.github.eoinf.jiggen.data.PuzzleTemplate
+import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import spark.Spark.*
@@ -10,9 +12,11 @@ import java.util.*
 
 private val logger = LogManager.getLogger()
 
-fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTemplateDao,
-                      jsonTransformer: JsonTransformer, baseUrl: String) {
-    path("/templates") {
+private const val puzzleTemplates = PuzzleTemplate.RESOURCE_NAME
+private const val templates = TemplateFile.RESOURCE_NAME
+
+fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
+    path("/$templates") {
         get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
@@ -36,43 +40,24 @@ fun templatesEndpoint(templateDao: ITemplateDao, puzzleTemplateDao: IPuzzleTempl
             val template = jsonTransformer.fromJson(req.body(), TemplateFileDTO::class.java)
 
             if (template.extension != null) {
-                template.id = UUID.randomUUID()
-                templateDao.save(template)
+                val result = templateDao.save(template.copy(id=UUID.randomUUID()))
 
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", "$baseUrl/images/${template.id}.${template.extension}")
-                jsonTransformer.toJson(template)
+                res.header("Location", resourceMapper.imagesUrl(result.id!!, template.extension))
+                jsonTransformer.toJson(result)
             } else {
                 res.status(400)
                 ""
             }
         }
     }
-    path("/templates/:id/puzzletemplates") {
+    path("/$templates/:id/$puzzleTemplates") {
         get("") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val templateId = UUID.fromString(req.params(":id"))
             res.setJsonContentType()
             jsonTransformer.toJson(templateDao.get(templateId)!!.puzzleTemplates)
-        }
-        get("/:ptid") { req, res ->
-            logger.info("GET request handled {}", req.params(":id"))
-            val templateId = UUID.fromString(req.params(":id"))
-            val puzzleTemplateId = UUID.fromString(req.params(":ptid"))
-
-            val puzzleTemplates = puzzleTemplateDao.getByTemplateId(templateId)
-            val template = puzzleTemplates.stream()
-                    .filter { it.id == puzzleTemplateId }
-                    .findFirst()
-
-            if (!template.isPresent) {
-                res.status(404)
-                ""
-            } else {
-                res.setJsonContentType()
-                jsonTransformer.toJson(template.get())
-            }
         }
     }
 }

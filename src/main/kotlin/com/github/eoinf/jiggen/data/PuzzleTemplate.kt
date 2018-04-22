@@ -4,38 +4,32 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-class PuzzleTemplate() {
-    @ManyToOne
-    @JoinColumn(name="templateId", unique = true, nullable = false)
-    lateinit var templateFile: TemplateFile
-
-    @Lob
-    var atlasDetails: String? = null
-
-    constructor(id: UUID, templateFile: TemplateFile): this() {
-        this.id = id
-        this.templateFile = templateFile
+class PuzzleTemplate(
+        @Id
+        private var id: UUID? = null,
+        @Lob
+        var atlasDetails: String? = null
+) : EntityWithId {
+    override fun getId(): UUID {
+        return id!!
     }
 
-    @Id
-    lateinit var id: UUID
-}
+    @ManyToOne
+    @JoinColumn(name = "templateId", unique = true, nullable = false)
+    var templateFile: TemplateFile? = null
 
-class PuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0) {
-    val id: UUID?
-    val templateFile: TemplateFileDTO?
-
-    @Lob
-    var atlasDetails: String?
-
-    init {
-        id = puzzleTemplate.id
-        atlasDetails = puzzleTemplate.atlasDetails
-
-        if (depth == 0) {
-            templateFile = null
-        } else {
-            templateFile = TemplateFileDTO(puzzleTemplate.templateFile, depth=depth - 1)
+    constructor(puzzleTemplateDTO: PuzzleTemplateDTO) : this(puzzleTemplateDTO.id, puzzleTemplateDTO.atlasDetails) {
+        if (puzzleTemplateDTO.templateFile != null) {
+            this.templateFile = TemplateFile(puzzleTemplateDTO.templateFile.id)
         }
     }
+
+    companion object {
+        const val RESOURCE_NAME = "generated-templates"
+    }
 }
+
+data class PuzzleTemplateDTO(val id: UUID,
+                             val templateFile: TemplateFileDTO? = null,
+                             val atlasDetails: String? = null,
+                             val links: Map<String, String>? = null)

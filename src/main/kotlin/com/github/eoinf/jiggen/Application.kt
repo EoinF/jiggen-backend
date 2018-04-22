@@ -6,21 +6,20 @@ import com.github.eoinf.jiggen.endpoint.*
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Component
 import spark.Spark.exception
-import spark.Spark.get
 import spark.servlet.SparkApplication
 
 /**
  * Class required for deploying as a servlet
  */
 @Component
-class Application(
+open class Application(
         private val puzzleDao: IPuzzleDao,
         private val templateDao: ITemplateDao,
         private val backgroundDao: IBackgroundDao,
         private val imageDao: IImageDao,
         private val puzzleTemplateDao: IPuzzleTemplateDao,
         private val jsonTransformer: JsonTransformer,
-        private val jiggenConfiguration: JiggenConfiguration
+        private val resourceMapper: ResourceMapper
         )
     : SparkApplication {
 
@@ -43,11 +42,10 @@ class Application(
             res.status(500)
         }
 
-        get("/") { _, _ -> "This resource manages templates and cached puzzles for the jiggen game" }
-
-        templatesEndpoint(templateDao, puzzleTemplateDao, jsonTransformer, jiggenConfiguration.baseUrl!!)
-        backgroundsEndpoint(backgroundDao, jsonTransformer, jiggenConfiguration.baseUrl!!)
-        imagesEndpoint(imageDao, jsonTransformer)
+        baseEndpoint(resourceMapper, jsonTransformer)
+        templatesEndpoint(templateDao, jsonTransformer, resourceMapper)
+        backgroundsEndpoint(backgroundDao, jsonTransformer, resourceMapper)
+        imagesEndpoint(imageDao, jsonTransformer, resourceMapper)
         puzzleTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
     }
 }
