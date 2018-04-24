@@ -5,10 +5,10 @@
         <filter-class>com.github.eoinf.jiggen.SpringifiedSparkFilter</filter-class>
         <init-param>
             <!--
-            Pass in the bean id of the main application class
+            Pass in the bean name of the main application class
             -->
             <param-name>applicationClass</param-name>
-            <param-value>Application</param-value>
+            <param-value>application</param-value>
         </init-param>
     </filter>
 

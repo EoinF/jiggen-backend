@@ -6,6 +6,7 @@ import javax.persistence.*
 @Entity
 class PuzzleTemplate(
         @Id
+        @Column(columnDefinition = "BINARY(16)")
         private var id: UUID? = null,
         @Lob
         var atlasDetails: String? = null

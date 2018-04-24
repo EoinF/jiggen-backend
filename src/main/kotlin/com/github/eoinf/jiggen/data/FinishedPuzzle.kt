@@ -7,6 +7,7 @@ import javax.persistence.*
 @Entity
 class FinishedPuzzle: Serializable {
     @Id
+    @Column(columnDefinition = "BINARY(16)")
     var id: UUID? = null
 
     @Temporal(javax.persistence.TemporalType.DATE)

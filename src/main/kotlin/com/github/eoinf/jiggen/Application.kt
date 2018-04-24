@@ -11,7 +11,7 @@ import spark.servlet.SparkApplication
 /**
  * Class required for deploying as a servlet
  */
-@Component
+@Component("application")
 open class Application(
         private val puzzleDao: IPuzzleDao,
         private val templateDao: ITemplateDao,

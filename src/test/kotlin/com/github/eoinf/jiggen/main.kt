@@ -3,9 +3,9 @@ package com.github.eoinf.jiggen
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.autoconfigure.domain.EntityScan
-import org.springframework.context.annotation.PropertySource
+import spark.servlet.SparkApplication
 
-@PropertySource("classpath:/application.properties")
+//@PropertySource("classpath:/application.properties")
 @SpringBootApplication
 @EntityScan("com.github.eoinf.jiggen.data")
 open class TestApplication
@@ -15,5 +15,5 @@ open class TestApplication
  */
 fun main(args: Array<String>) {
     val context = SpringApplication.run(TestApplication::class.java)
-    context.getBean(Application::class.java).init()
+    (context.getBean("application") as SparkApplication).init()
 }

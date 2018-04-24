@@ -38,6 +38,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
         }
         post("") { req, res ->
             val template = jsonTransformer.fromJson(req.body(), TemplateFileDTO::class.java)
+            logger.info("POST request handled {}", template)
 
             if (template.extension != null) {
                 val result = templateDao.save(template.copy(id=UUID.randomUUID()))
