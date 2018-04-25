@@ -9,6 +9,6 @@ class ImageFile(private val id: UUID?, pathname: String): File(pathname), Entity
     }
 
     companion object {
-        const val RESOURCE_NAME = "IMAGES"
+        const val RESOURCE_NAME = "images"
     }
 }

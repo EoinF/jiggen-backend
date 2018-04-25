@@ -67,10 +67,14 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer, resour
             val id = UUID.fromString(fileParts[0])
             val ext = fileParts[1]
 
-            val image: File = imageDao.get(id, ext)
+            val image: File? = imageDao.get(id, ext)
 
-            res.setImageContentType(ext)
-            image.inputStream()
+            if (image != null) {
+                res.setImageContentType(ext)
+                image.inputStream()
+            } else {
+                res.status(HttpStatus.NOT_FOUND_404)
+            }
         }
 
         put("/:file") { req, res ->
@@ -83,6 +87,7 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer, resour
 
             if (req.contentLength() == 0) {
                 res.status(HttpStatus.BAD_REQUEST_400)
+                jsonTransformer.toJson(mapOf("error" to "Image size must not be 0 bytes"))
             } else {
                 req.raw().inputStream.use {
                     imageDao.save(id, ext, it)

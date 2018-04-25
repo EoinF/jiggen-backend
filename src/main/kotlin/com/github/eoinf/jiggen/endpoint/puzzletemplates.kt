@@ -13,6 +13,11 @@ private const val puzzleTemplates = PuzzleTemplate.RESOURCE_NAME
 
 fun puzzleTemplatesEndpoint(puzzleTemplateDao: IPuzzleTemplateDao, jsonTransformer: JsonTransformer) {
     path("/$puzzleTemplates") {
+        get("") { req, res ->
+            logger.info("GET All request handled")
+            res.setJsonContentType()
+            jsonTransformer.toJson(puzzleTemplateDao.get())
+        }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))

@@ -9,7 +9,8 @@ class PuzzleTemplate(
         @Column(columnDefinition = "BINARY(16)")
         private var id: UUID? = null,
         @Lob
-        var atlasDetails: String? = null
+        var atlasDetails: String? = null,
+        val extension: String? = null
 ) : EntityWithId {
     override fun getId(): UUID {
         return id!!
@@ -19,7 +20,7 @@ class PuzzleTemplate(
     @JoinColumn(name = "templateId", unique = true, nullable = false)
     var templateFile: TemplateFile? = null
 
-    constructor(puzzleTemplateDTO: PuzzleTemplateDTO) : this(puzzleTemplateDTO.id, puzzleTemplateDTO.atlasDetails) {
+    constructor(puzzleTemplateDTO: PuzzleTemplateDTO) : this(puzzleTemplateDTO.id, puzzleTemplateDTO.atlasDetails, puzzleTemplateDTO.extension) {
         if (puzzleTemplateDTO.templateFile != null) {
             this.templateFile = TemplateFile(puzzleTemplateDTO.templateFile.id)
         }
@@ -33,4 +34,5 @@ class PuzzleTemplate(
 data class PuzzleTemplateDTO(val id: UUID,
                              val templateFile: TemplateFileDTO? = null,
                              val atlasDetails: String? = null,
+                             val extension: String? = null,
                              val links: Map<String, String>? = null)

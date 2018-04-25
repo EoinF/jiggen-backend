@@ -2,10 +2,12 @@ package com.github.eoinf.jiggen
 
 import com.github.eoinf.jiggen.data.*
 import org.springframework.stereotype.Service
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 @Service
-class DataMapper(private val resourceMapper: ResourceMapper) {
+class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenConfiguration: JiggenConfiguration) {
 
     fun toTemplateFileDTO(templateFile: TemplateFile, depth: Int = 0): TemplateFileDTO {
         val id: UUID = templateFile.getId()
@@ -21,18 +23,20 @@ class DataMapper(private val resourceMapper: ResourceMapper) {
             }.toSet()
         }
 
-        return TemplateFileDTO(id, name, extension, puzzleTemplates, generateLinks(id))
-    }
-
-    private fun generateLinks(id: UUID): Map<String, String> {
         val childResourceName = PuzzleTemplate.RESOURCE_NAME
-        return mapOf(
+        val linksMap = mutableMapOf(
                 "self" to resourceMapper.templatesUrl(id),
-                "puzzleTemplates" to resourceMapper.templatesUrl(id, childResourceName)
+                "generated-templates" to resourceMapper.templatesUrl(id, childResourceName)
         )
+
+        if (imageExists(templateFile.getId() ,templateFile.extension!!)) {
+            linksMap["image"] = resourceMapper.imagesUrl(templateFile.getId(), templateFile.extension)
+        }
+
+        return TemplateFileDTO(id, name, extension, puzzleTemplates, linksMap)
     }
 
-    fun toPuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 1): PuzzleTemplateDTO {
+    fun toPuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0): PuzzleTemplateDTO {
         val id = puzzleTemplate.getId()
         var atlasDetails: String? = null
         var templateFile: TemplateFileDTO? = null
@@ -42,18 +46,20 @@ class DataMapper(private val resourceMapper: ResourceMapper) {
         } else if (depth > 1) {
             templateFile = toTemplateFileDTO(puzzleTemplate.templateFile!!, depth = depth - 2)
         }
-        return PuzzleTemplateDTO(id, templateFile, atlasDetails, generateLinks(id, puzzleTemplate.templateFile))
-    }
 
-    private fun generateLinks(id: UUID, parentResource: EntityWithId?): Map<String, String> {
         val linksMap = mutableMapOf(
                 "self" to resourceMapper.puzzleTemplatesUrl(id)
         )
-        if (parentResource != null) {
-            linksMap["templateFile"] = resourceMapper.templatesUrl(parentResource.getId())
+        if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
+            linksMap["image"] = resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension)
         }
-        return linksMap
+        if (puzzleTemplate.templateFile != null) {
+            linksMap["templateFile"] = resourceMapper.templatesUrl(puzzleTemplate.templateFile!!.getId())
+        }
+
+        return PuzzleTemplateDTO(id, templateFile, atlasDetails, puzzleTemplate.extension, linksMap)
     }
+
 
     fun toBackgroundFileDTO(backgroundFile: BackgroundFile, depth: Int = 0): BackgroundFileDTO {
         val id: UUID = backgroundFile.getId()
@@ -64,12 +70,19 @@ class DataMapper(private val resourceMapper: ResourceMapper) {
             extension = backgroundFile.extension
         }
 
-        return BackgroundFileDTO(id, name, extension, generateLinks1(id))
+        val linksMap = mutableMapOf(
+                "self" to resourceMapper.backgroundsUrl(id)
+                )
+
+        if (imageExists(backgroundFile.getId() ,backgroundFile.extension!!)) {
+            linksMap["image"] = resourceMapper.imagesUrl(backgroundFile.getId(), backgroundFile.extension!!)
+        }
+
+        return BackgroundFileDTO(id, name, extension, linksMap)
     }
 
-    private fun generateLinks1(id: UUID): Map<String, String> {
-        return mapOf(
-                "self" to resourceMapper.backgroundsUrl(id)
-        )
+    private fun imageExists(id: UUID, extension: String): Boolean {
+        val pathname = "${jiggenConfiguration.imageFolder}/$id.$extension"
+        return Files.exists(Paths.get(pathname))
     }
 }

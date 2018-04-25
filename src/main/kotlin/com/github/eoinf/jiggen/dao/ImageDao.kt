@@ -8,10 +8,12 @@ import com.github.eoinf.jiggen.tasks.GeneratedTaskRunner
 import org.springframework.stereotype.Service
 import java.io.File
 import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.*
 
 interface IImageDao {
-    fun get(id: UUID?, extension: String?) : ImageFile
+    fun get(id: UUID?, extension: String?): ImageFile?
     fun save(id: UUID, extension: String, inputStream: InputStream)
 }
 
@@ -21,10 +23,15 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
                private val generatedTaskRunner: GeneratedTaskRunner) : IImageDao {
 
 
-
-    override fun get(id: UUID?, extension: String?) : ImageFile {
-        return ImageFile(id, "${config.imageFolder}/$id.$extension")
+    override fun get(id: UUID?, extension: String?): ImageFile? {
+        val pathname = "${config.imageFolder}/$id.$extension"
+        return if (Files.exists(Paths.get(pathname))) {
+            ImageFile(id, pathname)
+        } else {
+            null
+        }
     }
+
     override fun save(id: UUID, extension: String, inputStream: InputStream) {
         val resource = hasMatchingResource(id)
 
@@ -41,8 +48,7 @@ class ImageDao(private val config: JiggenConfiguration, private val templateDao:
             if (resource is TemplateFileDTO) {
                 generatedTaskRunner.generateNewTemplate(id, file.absolutePath)
             }
-        }
-        else {
+        } else {
             throw NoMatchingResourceEntryException("Corresponding image entry does not exist")
         }
     }
