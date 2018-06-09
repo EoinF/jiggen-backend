@@ -1,9 +1,6 @@
 package com.github.eoinf.jiggen
 
-import com.github.eoinf.jiggen.data.BackgroundFile
-import com.github.eoinf.jiggen.data.ImageFile
-import com.github.eoinf.jiggen.data.PuzzleTemplate
-import com.github.eoinf.jiggen.data.TemplateFile
+import com.github.eoinf.jiggen.data.*
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -14,6 +11,7 @@ class ResourceMapper(jiggenConfiguration: JiggenConfiguration) {
     val backgroundsUrl = "$baseUrl/${BackgroundFile.RESOURCE_NAME}"
     val templatesUrl = "$baseUrl/${TemplateFile.RESOURCE_NAME}"
     val imagesUrl = "$baseUrl/${ImageFile.RESOURCE_NAME}"
+    val atlasesUrl = "$baseUrl/${AtlasFile.RESOURCE_NAME}"
     val puzzleTemplatesUrl = "$baseUrl/${PuzzleTemplate.RESOURCE_NAME}"
 
     fun backgroundsUrl(id: UUID): String {
@@ -33,5 +31,8 @@ class ResourceMapper(jiggenConfiguration: JiggenConfiguration) {
 
     fun imagesUrl(id: UUID, extension: String): String {
         return "$imagesUrl/$id.$extension"
+    }
+    fun atlasUrl(id: UUID): String {
+        return "$atlasesUrl/$id.atlas"
     }
 }

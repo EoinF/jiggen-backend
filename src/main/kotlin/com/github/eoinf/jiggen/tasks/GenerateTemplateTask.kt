@@ -47,15 +47,14 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             TexturePacker.process(settings, puzzleFolderName, atlasFolderTempFolder, packedImageId.toString())
 
             logger.info("PuzzleTemplateTask::run Extracting atlas details")
-            val atlasDetails = getAtlasFromFolder(atlasFolderTempFolder, packedImageId.toString())
             moveAtlasImageToImagesFolder(atlasFolderTempFolder, imageFolder, packedImageId)
+            moveAtlasTextToAtlasFolder(atlasFolderTempFolder, atlasFolder, packedImageId)
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
 
             val puzzleTemplate = PuzzleTemplateDTO(
                     id = packedImageId,
                     templateFile = TemplateFileDTO(imageId),
-                    atlasDetails = atlasDetails,
                     extension = "png"
             )
 
@@ -88,14 +87,6 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
     }
 
     /**
-     * Gets the atlas details as a string from the atlas file
-     */
-    private fun getAtlasFromFolder(folderName: String, atlasName: String): String {
-        val file = File("$folderName/$atlasName.atlas")
-        return file.readText()
-    }
-
-    /**
      * Moves the generated atlas image to the IMAGES folder so it can be fetched as a resource
      * from the IMAGES endpoint
      */
@@ -104,6 +95,20 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
 
         srcFile.inputStream().use { input ->
             File("$dstFolder/$packedImageId.png").outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+    }
+
+    /**
+     * Moves the generated atlas file to the ATLAS folder so it can be fetched as a resource
+     * from the ATLAS endpoint
+     */
+    private fun moveAtlasTextToAtlasFolder(srcFolder: String, dstFolder: String, atlasName: UUID) {
+        val srcFile = File("$srcFolder/$atlasName.atlas")
+
+        srcFile.inputStream().use { input ->
+            File("$dstFolder/$atlasName.atlas").outputStream().use { output ->
                 input.copyTo(output)
             }
         }

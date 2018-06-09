@@ -19,7 +19,8 @@ open class Application(
         private val imageDao: IImageDao,
         private val puzzleTemplateDao: IPuzzleTemplateDao,
         private val jsonTransformer: JsonTransformer,
-        private val resourceMapper: ResourceMapper
+        private val resourceMapper: ResourceMapper,
+        private val atlasDao: AtlasDao
         )
     : SparkApplication {
 
@@ -47,5 +48,6 @@ open class Application(
         backgroundsEndpoint(backgroundDao, jsonTransformer, resourceMapper)
         imagesEndpoint(imageDao, jsonTransformer, resourceMapper)
         puzzleTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
+        atlasesEndpoint(atlasDao, jsonTransformer, resourceMapper)
     }
 }

@@ -11,11 +11,10 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
     fun toTemplateFileDTO(templateFile: TemplateFile, depth: Int = 0): TemplateFileDTO {
         val id: UUID = templateFile.getId()
-        var name: String? = null
+        val name = templateFile.name
         var extension: String? = null
         var puzzleTemplates: Set<PuzzleTemplateDTO>? = null
         if (depth == 1) {
-            name = templateFile.name
             extension = templateFile.extension
         } else if (depth > 1) {
             puzzleTemplates = templateFile.puzzleTemplates!!.map {
@@ -26,7 +25,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         val childResourceName = PuzzleTemplate.RESOURCE_NAME
         val linksMap = mutableMapOf(
                 "self" to resourceMapper.templatesUrl(id),
-                "generated-templates" to resourceMapper.templatesUrl(id, childResourceName)
+                "generatedTemplates" to resourceMapper.templatesUrl(id, childResourceName)
         )
 
         if (imageExists(templateFile.getId() ,templateFile.extension!!)) {
@@ -38,11 +37,13 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
     fun toPuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0): PuzzleTemplateDTO {
         val id = puzzleTemplate.getId()
-        var atlasDetails: String? = null
+        var puzzleDetails: String? = null
+        var extension: String? = null
         var templateFile: TemplateFileDTO? = null
 
         if (depth == 1) {
-            atlasDetails = puzzleTemplate.atlasDetails
+            puzzleDetails = puzzleTemplate.puzzleDetails
+            extension = puzzleTemplate.extension
         } else if (depth > 1) {
             templateFile = toTemplateFileDTO(puzzleTemplate.templateFile!!, depth = depth - 2)
         }
@@ -53,11 +54,20 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension)
         }
+        if (atlasExists(puzzleTemplate.getId())) {
+            linksMap["atlas"] = resourceMapper.atlasUrl(puzzleTemplate.getId())
+        }
         if (puzzleTemplate.templateFile != null) {
             linksMap["templateFile"] = resourceMapper.templatesUrl(puzzleTemplate.templateFile!!.getId())
         }
 
-        return PuzzleTemplateDTO(id, templateFile, atlasDetails, puzzleTemplate.extension, linksMap)
+        return PuzzleTemplateDTO(
+                id=id,
+                templateFile =templateFile,
+                puzzleDetails = puzzleDetails,
+                extension = extension,
+                links = linksMap
+        )
     }
 
 
@@ -75,7 +85,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
                 )
 
         if (imageExists(backgroundFile.getId() ,backgroundFile.extension!!)) {
-            linksMap["image"] = resourceMapper.imagesUrl(backgroundFile.getId(), backgroundFile.extension!!)
+            linksMap["image"] = resourceMapper.imagesUrl(backgroundFile.getId(), backgroundFile.extension)
         }
 
         return BackgroundFileDTO(id, name, extension, linksMap)
@@ -83,6 +93,10 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
     private fun imageExists(id: UUID, extension: String): Boolean {
         val pathname = "${jiggenConfiguration.imageFolder}/$id.$extension"
+        return Files.exists(Paths.get(pathname))
+    }
+    private fun atlasExists(id: UUID): Boolean {
+        val pathname = "${jiggenConfiguration.atlasFolder}/$id.atlas"
         return Files.exists(Paths.get(pathname))
     }
 }
