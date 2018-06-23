@@ -2,6 +2,7 @@ package com.github.eoinf.jiggen
 
 import com.google.gson.Gson
 import org.springframework.stereotype.Service
+import java.lang.reflect.Type
 
 @Service
 class JsonTransformer {
@@ -14,6 +15,9 @@ class JsonTransformer {
         }
     }
     fun <T> fromJson(json: String, o: Class<T>) : T {
+        return gson.fromJson(json, o)
+    }
+    fun <T> fromJson(json: String, o: Type) : T {
         return gson.fromJson(json, o)
     }
 }

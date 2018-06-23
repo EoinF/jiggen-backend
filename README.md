@@ -57,7 +57,7 @@ The war file is generated in:
 
 10. Inside webapps/jiggen-backend/WEB-INF/classes/application.properties, change the following line:
 
-        spring.jpa.hibernate.ddl-auto=create
+        spring.jpa.hibernate.ddl-auto=update
     
     to
     

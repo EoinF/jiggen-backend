@@ -1,6 +1,6 @@
 package com.github.eoinf.jiggen.dao
 
-import com.github.eoinf.jiggen.JiggenConfiguration
+import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.ImageFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import com.github.eoinf.jiggen.exception.NoMatchingResourceEntryException
@@ -18,7 +18,7 @@ interface IImageDao {
 }
 
 @Service
-class ImageDao(private val config: JiggenConfiguration, private val templateDao: ITemplateDao,
+class ImageDao(private val config: JiggenConfig, private val templateDao: ITemplateDao,
                private val backgroundDao: IBackgroundDao,
                private val generatedTaskRunner: GeneratedTaskRunner) : IImageDao {
 

@@ -1,11 +1,12 @@
 package com.github.eoinf.jiggen
 
+import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.*
 import org.springframework.stereotype.Service
 import java.util.*
 
 @Service
-class ResourceMapper(jiggenConfiguration: JiggenConfiguration) {
+class ResourceMapper(jiggenConfiguration: JiggenConfig) {
     private val baseUrl = jiggenConfiguration.baseUrl
 
     val backgroundsUrl = "$baseUrl/${BackgroundFile.RESOURCE_NAME}"

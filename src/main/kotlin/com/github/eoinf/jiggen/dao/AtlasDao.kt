@@ -1,6 +1,6 @@
 package com.github.eoinf.jiggen.dao
 
-import com.github.eoinf.jiggen.JiggenConfiguration
+import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.AtlasFile
 import org.springframework.stereotype.Service
 import java.nio.file.Files
@@ -12,7 +12,7 @@ interface IAtlasDao {
 }
 
 @Service
-class AtlasDao(private val config: JiggenConfiguration) : IAtlasDao {
+class AtlasDao(private val config: JiggenConfig) : IAtlasDao {
 
 
     override fun get(id: UUID?): AtlasFile? {

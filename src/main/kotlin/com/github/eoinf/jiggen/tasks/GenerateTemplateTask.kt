@@ -5,14 +5,17 @@ import com.badlogic.gdx.graphics.Pixmap
 import com.badlogic.gdx.graphics.PixmapIO
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
 import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
+import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
-import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraph
+import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraphTemplate
+import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzlePieceTemplate
 import com.github.eoinf.jiggen.dao.PuzzleTemplateDao
 import com.github.eoinf.jiggen.data.PuzzleTemplateDTO
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.util.*
+import kotlin.collections.HashMap
 
 class GenerateTemplateTask(private val imageId: UUID, private val imageLocation: String,
                            private val imageFolder: String, private val atlasFolder: String,
@@ -54,6 +57,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
 
             val puzzleTemplate = PuzzleTemplateDTO(
                     id = packedImageId,
+                    vertices=toVertexDefinitionMap(puzzleGraph.vertices),
                     templateFile = TemplateFileDTO(imageId),
                     extension = "png"
             )
@@ -74,10 +78,10 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
      * Save each puzzle piece to a file
      * So it can be picked up by the texture packer and packed into one image
      */
-    private fun saveFilesToFolder(puzzleGraph: PuzzleGraph, folderName: String) {
-        for (i in 0 until puzzleGraph.vertices.size) {
-            val file = FileHandle("$folderName/$i.png")
-            val data = puzzleGraph.vertices[i].data
+    private fun saveFilesToFolder(puzzleGraph: PuzzleGraphTemplate, folderName: String) {
+        puzzleGraph.vertices.forEach {
+            val file = FileHandle("$folderName/${it.key}.png")
+            val data = it.value.data
             if (data is Pixmap) {
                 PixmapIO.writePNG(file, data)
             } else {
@@ -120,5 +124,13 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
         } else {
             File(tmpFolder).deleteRecursively()
         }
+    }
+
+    private fun <T> toVertexDefinitionMap(vertices: Map<Int, PuzzlePieceTemplate<T>>): Map<Int, IntRectangle> {
+        val result = HashMap<Int, IntRectangle>()
+        vertices.forEach {
+            result[it.key] = IntRectangle(it.value.x(), it.value.y(), it.value.width, it.value.height)
+        }
+        return result
     }
 }

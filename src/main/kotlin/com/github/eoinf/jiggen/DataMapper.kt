@@ -1,5 +1,7 @@
 package com.github.eoinf.jiggen
 
+import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
+import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.*
 import org.springframework.stereotype.Service
 import java.nio.file.Files
@@ -7,16 +9,17 @@ import java.nio.file.Paths
 import java.util.*
 
 @Service
-class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenConfiguration: JiggenConfiguration) {
+class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenConfiguration: JiggenConfig) {
 
     fun toTemplateFileDTO(templateFile: TemplateFile, depth: Int = 0): TemplateFileDTO {
         val id: UUID = templateFile.getId()
         val name = templateFile.name
         var extension: String? = null
         var puzzleTemplates: Set<PuzzleTemplateDTO>? = null
-        if (depth == 1) {
+        if (depth >= 1) {
             extension = templateFile.extension
-        } else if (depth > 1) {
+        }
+        if (depth > 1) {
             puzzleTemplates = templateFile.puzzleTemplates!!.map {
                 toPuzzleTemplateDTO(it, depth = depth - 2)
             }.toSet()
@@ -28,7 +31,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
                 "generatedTemplates" to resourceMapper.templatesUrl(id, childResourceName)
         )
 
-        if (imageExists(templateFile.getId() ,templateFile.extension!!)) {
+        if (imageExists(templateFile.getId(), templateFile.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(templateFile.getId(), templateFile.extension)
         }
 
@@ -37,14 +40,15 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
     fun toPuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0): PuzzleTemplateDTO {
         val id = puzzleTemplate.getId()
-        var puzzleDetails: String? = null
+        var vertices: Map<Int, IntRectangle>? = null
         var extension: String? = null
         var templateFile: TemplateFileDTO? = null
 
-        if (depth == 1) {
-            puzzleDetails = puzzleTemplate.puzzleDetails
+        if (depth >= 1) {
+            vertices = puzzleTemplate.vertices
             extension = puzzleTemplate.extension
-        } else if (depth > 1) {
+        }
+        if (depth > 1) {
             templateFile = toTemplateFileDTO(puzzleTemplate.templateFile!!, depth = depth - 2)
         }
 
@@ -62,9 +66,9 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         }
 
         return PuzzleTemplateDTO(
-                id=id,
-                templateFile =templateFile,
-                puzzleDetails = puzzleDetails,
+                id = id,
+                templateFile = templateFile,
+                vertices = vertices,
                 extension = extension,
                 links = linksMap
         )
@@ -82,9 +86,9 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
         val linksMap = mutableMapOf(
                 "self" to resourceMapper.backgroundsUrl(id)
-                )
+        )
 
-        if (imageExists(backgroundFile.getId() ,backgroundFile.extension!!)) {
+        if (imageExists(backgroundFile.getId(), backgroundFile.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(backgroundFile.getId(), backgroundFile.extension)
         }
 
@@ -95,6 +99,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         val pathname = "${jiggenConfiguration.imageFolder}/$id.$extension"
         return Files.exists(Paths.get(pathname))
     }
+
     private fun atlasExists(id: UUID): Boolean {
         val pathname = "${jiggenConfiguration.atlasFolder}/$id.atlas"
         return Files.exists(Paths.get(pathname))

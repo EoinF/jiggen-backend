@@ -1,4 +1,4 @@
-package com.github.eoinf.jiggen
+package com.github.eoinf.jiggen.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.annotation.Bean
@@ -8,7 +8,7 @@ import java.util.concurrent.Executors
 
 @Configuration
 @ConfigurationProperties(prefix = "jiggen")
-open class JiggenConfiguration {
+open class JiggenConfig {
 
     class OsConfig{
         var imageFolder: String? = null
