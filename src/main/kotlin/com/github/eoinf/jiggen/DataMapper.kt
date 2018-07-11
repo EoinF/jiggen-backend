@@ -1,5 +1,6 @@
 package com.github.eoinf.jiggen
 
+import com.github.eoinf.jiggen.PuzzleExtractor.GraphEdge
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.*
@@ -41,11 +42,17 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
     fun toPuzzleTemplateDTO(puzzleTemplate: PuzzleTemplate, depth: Int = 0): PuzzleTemplateDTO {
         val id = puzzleTemplate.getId()
         var vertices: Map<Int, IntRectangle>? = null
+        var edges: List<GraphEdge>? = null
         var extension: String? = null
         var templateFile: TemplateFileDTO? = null
+        var width: Int? = null
+        var height: Int? = null
 
         if (depth >= 1) {
+            width = puzzleTemplate.width
+            height = puzzleTemplate.height
             vertices = puzzleTemplate.vertices
+            edges = puzzleTemplate.edges
             extension = puzzleTemplate.extension
         }
         if (depth > 1) {
@@ -68,7 +75,10 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         return PuzzleTemplateDTO(
                 id = id,
                 templateFile = templateFile,
+                width = width,
+                height = height,
                 vertices = vertices,
+                edges = edges,
                 extension = extension,
                 links = linksMap
         )

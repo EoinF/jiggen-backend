@@ -57,6 +57,9 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
 
             val puzzleTemplate = PuzzleTemplateDTO(
                     id = packedImageId,
+                    width=puzzleGraph.width,
+                    height=puzzleGraph.height,
+                    edges=puzzleGraph.edges,
                     vertices=toVertexDefinitionMap(puzzleGraph.vertices),
                     templateFile = TemplateFileDTO(imageId),
                     extension = "png"
