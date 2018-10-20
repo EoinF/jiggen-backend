@@ -46,10 +46,10 @@ def get_generated_template(generated_templates_link):
 
 def setup_playable_puzzle(playable_puzzles_link, generated_template, background):
     playable_puzzle = create_playable_puzzle(playable_puzzles_link, generated_template['id'], background['id'])
-
-    print(f'''Successfully created playable puzzle at {playable_puzzle['links']['self']} with 
-        generated template {generated_template['id']} and background {background['id']}
-    ''')
+    print(f"""Successfully created playable puzzle 
+at {playable_puzzle['links']['self']} with
+    Generated Template {generated_template['id']}
+    and Background {background['id']}""")
     return playable_puzzle
 
 
