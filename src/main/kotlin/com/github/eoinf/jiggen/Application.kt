@@ -13,11 +13,11 @@ import spark.servlet.SparkApplication
  */
 @Component("application")
 open class Application(
-        private val puzzleDao: IPuzzleDao,
+        private val puzzleDao: IPlayablePuzzleDao,
         private val templateDao: ITemplateDao,
         private val backgroundDao: IBackgroundDao,
         private val imageDao: IImageDao,
-        private val puzzleTemplateDao: IPuzzleTemplateDao,
+        private val puzzleTemplateDao: IGeneratedTemplateDao,
         private val jsonTransformer: JsonTransformer,
         private val resourceMapper: ResourceMapper,
         private val atlasDao: AtlasDao
@@ -47,7 +47,8 @@ open class Application(
         templatesEndpoint(templateDao, jsonTransformer, resourceMapper)
         backgroundsEndpoint(backgroundDao, jsonTransformer, resourceMapper)
         imagesEndpoint(imageDao, jsonTransformer, resourceMapper)
-        puzzleTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
+        generatedTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
+        playablePuzzlesEndpoint(puzzleDao, jsonTransformer)
         atlasesEndpoint(atlasDao, jsonTransformer, resourceMapper)
     }
 }

@@ -9,16 +9,17 @@ import org.springframework.stereotype.Service
 import java.util.*
 
 interface IBackgroundDao {
-    fun get() : List<BackgroundFileDTO>
-    fun get(id: UUID) : BackgroundFileDTO?
-    fun save(background: BackgroundFileDTO) : BackgroundFileDTO
+    fun get(): List<BackgroundFileDTO>
+    fun get(id: UUID): BackgroundFileDTO?
+    fun save(background: BackgroundFileDTO): BackgroundFileDTO
 }
 
 @Service
 class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
-    @Autowired lateinit var backgroundRepository: BackgroundRepository
+    @Autowired
+    lateinit var backgroundRepository: BackgroundRepository
 
-    override fun get(id: UUID) : BackgroundFileDTO? {
+    override fun get(id: UUID): BackgroundFileDTO? {
         val backgroundFile = backgroundRepository.findById(id).orElse(null)
         if (backgroundFile == null)
             return null
@@ -26,13 +27,13 @@ class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
             return dataMapper.toBackgroundFileDTO(backgroundFile, depth = 1)
     }
 
-    override fun get() : List<BackgroundFileDTO> {
+    override fun get(): List<BackgroundFileDTO> {
         return backgroundRepository.findAll().toList().map {
-            dataMapper.toBackgroundFileDTO(it)
+            dataMapper.toBackgroundFileDTO(it, depth = 1)
         }
     }
 
-    override fun save(background: BackgroundFileDTO) : BackgroundFileDTO {
-        return dataMapper.toBackgroundFileDTO(backgroundRepository.save(BackgroundFile(background)))
+    override fun save(background: BackgroundFileDTO): BackgroundFileDTO {
+        return dataMapper.toBackgroundFileDTO(backgroundRepository.save(BackgroundFile(background)), depth = 1)
     }
 }

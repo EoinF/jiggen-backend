@@ -10,17 +10,18 @@ import org.springframework.transaction.annotation.Transactional
 import java.util.*
 
 interface ITemplateDao {
-    fun get() : List<TemplateFileDTO>
-    fun get(id: UUID) : TemplateFileDTO?
-    fun save(template: TemplateFileDTO) : TemplateFileDTO
+    fun get(): List<TemplateFileDTO>
+    fun get(id: UUID): TemplateFileDTO?
+    fun save(template: TemplateFileDTO): TemplateFileDTO
 }
 
 @Service
 open class TemplateRepoDao(private val dataMapper: DataMapper) : ITemplateDao {
-    @Autowired lateinit var templateRepository: TemplateRepository
+    @Autowired
+    lateinit var templateRepository: TemplateRepository
 
     @Transactional
-    override fun get(id: UUID) : TemplateFileDTO? {
+    override fun get(id: UUID): TemplateFileDTO? {
         val templateFile = templateRepository.findById(id).orElse(null)
         if (templateFile == null)
             return null
@@ -28,13 +29,13 @@ open class TemplateRepoDao(private val dataMapper: DataMapper) : ITemplateDao {
             return dataMapper.toTemplateFileDTO(templateFile, depth = 2)
     }
 
-    override fun get() : List<TemplateFileDTO> {
+    override fun get(): List<TemplateFileDTO> {
         return templateRepository.findAll().toList().map {
-            dataMapper.toTemplateFileDTO(it)
+            dataMapper.toTemplateFileDTO(it, depth = 1)
         }
     }
 
-    override fun save(template: TemplateFileDTO) : TemplateFileDTO {
-        return dataMapper.toTemplateFileDTO(templateRepository.save(TemplateFile(template)))
+    override fun save(template: TemplateFileDTO): TemplateFileDTO {
+        return dataMapper.toTemplateFileDTO(templateRepository.save(TemplateFile(template)), depth = 1)
     }
 }

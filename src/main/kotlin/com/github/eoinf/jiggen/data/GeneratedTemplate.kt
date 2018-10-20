@@ -8,7 +8,7 @@ import java.util.*
 import javax.persistence.*
 
 @Entity
-class PuzzleTemplate(
+class GeneratedTemplate(
         @Id
         @Column(columnDefinition = "BINARY(16)")
         private var id: UUID? = null,
@@ -30,10 +30,10 @@ class PuzzleTemplate(
     @JoinColumn(name = "templateId", unique = true, nullable = false)
     var templateFile: TemplateFile? = null
 
-    constructor(puzzleTemplateDTO: PuzzleTemplateDTO) : this(puzzleTemplateDTO.id, puzzleTemplateDTO.width,
-            puzzleTemplateDTO.height, puzzleTemplateDTO.vertices, puzzleTemplateDTO.edges, puzzleTemplateDTO.extension) {
-        if (puzzleTemplateDTO.templateFile != null) {
-            this.templateFile = TemplateFile(puzzleTemplateDTO.templateFile.id)
+    constructor(generatedTemplateDTO: GeneratedTemplateDTO) : this(generatedTemplateDTO.id, generatedTemplateDTO.width,
+            generatedTemplateDTO.height, generatedTemplateDTO.vertices, generatedTemplateDTO.edges, generatedTemplateDTO.extension) {
+        if (generatedTemplateDTO.templateFile != null) {
+            this.templateFile = TemplateFile(generatedTemplateDTO.templateFile.id)
         }
     }
 
@@ -42,11 +42,11 @@ class PuzzleTemplate(
     }
 }
 
-data class PuzzleTemplateDTO(val id: UUID,
-                             val templateFile: TemplateFileDTO? = null,
-                             val width: Int? = null,
-                             val height: Int? = null,
-                             @Lob var vertices: Map<Int, IntRectangle>? = null,
-                             @Lob var edges: List<GraphEdge>? = null,
-                             val extension: String? = null,
-                             val links: Map<String, String>? = null)
+data class GeneratedTemplateDTO(val id: UUID,
+                                val templateFile: TemplateFileDTO? = null,
+                                val width: Int? = null,
+                                val height: Int? = null,
+                                @Lob var vertices: Map<Int, IntRectangle>? = null,
+                                @Lob var edges: List<GraphEdge>? = null,
+                                val extension: String? = null,
+                                val links: Map<String, String>? = null)

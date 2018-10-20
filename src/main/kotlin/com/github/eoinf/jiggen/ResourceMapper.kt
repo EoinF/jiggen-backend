@@ -13,7 +13,8 @@ class ResourceMapper(jiggenConfiguration: JiggenConfig) {
     val templatesUrl = "$baseUrl/${TemplateFile.RESOURCE_NAME}"
     val imagesUrl = "$baseUrl/${ImageFile.RESOURCE_NAME}"
     val atlasesUrl = "$baseUrl/${AtlasFile.RESOURCE_NAME}"
-    val puzzleTemplatesUrl = "$baseUrl/${PuzzleTemplate.RESOURCE_NAME}"
+    val generatedTemplatesUrl = "$baseUrl/${GeneratedTemplate.RESOURCE_NAME}"
+    val playablePuzzlesUrl = "$baseUrl/${PlayablePuzzle.RESOURCE_NAME}"
 
     fun backgroundsUrl(id: UUID): String {
         return "$backgroundsUrl/$id"
@@ -27,7 +28,7 @@ class ResourceMapper(jiggenConfiguration: JiggenConfig) {
     }
 
     fun puzzleTemplatesUrl(id: UUID): String {
-        return "$puzzleTemplatesUrl/$id"
+        return "$generatedTemplatesUrl/$id"
     }
 
     fun imagesUrl(id: UUID, extension: String): String {
@@ -35,5 +36,9 @@ class ResourceMapper(jiggenConfiguration: JiggenConfig) {
     }
     fun atlasUrl(id: UUID): String {
         return "$atlasesUrl/$id.atlas"
+    }
+
+    fun playablePuzzlesUrl(id: UUID): String {
+        return "$playablePuzzlesUrl/$id"
     }
 }

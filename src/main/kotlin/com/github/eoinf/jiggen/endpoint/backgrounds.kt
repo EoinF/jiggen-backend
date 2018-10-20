@@ -39,6 +39,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
             val background = jsonTransformer.fromJson(req.body(), BackgroundFileDTO::class.java)
 
             if (background.extension != null) {
+
                 val result = backgroundDao.save(background.copy(id= UUID.randomUUID()))
                 res.status(201)
                 res.setJsonContentType()
@@ -46,7 +47,7 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
                 jsonTransformer.toJson(result)
             } else {
                 res.status(400)
-                ""
+                "\"extension\" parameter is required"
             }
         }
     }

@@ -9,8 +9,8 @@ import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraphTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzlePieceTemplate
-import com.github.eoinf.jiggen.dao.PuzzleTemplateDao
-import com.github.eoinf.jiggen.data.PuzzleTemplateDTO
+import com.github.eoinf.jiggen.dao.GeneratedTemplateDao
+import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import java.io.File
@@ -19,7 +19,7 @@ import kotlin.collections.HashMap
 
 class GenerateTemplateTask(private val imageId: UUID, private val imageLocation: String,
                            private val imageFolder: String, private val atlasFolder: String,
-                           private val puzzleTemplateDao: PuzzleTemplateDao) : Runnable {
+                           private val puzzleTemplateDao: GeneratedTemplateDao) : Runnable {
 
     private val logger = LogManager.getLogger()
 
@@ -55,7 +55,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
 
-            val puzzleTemplate = PuzzleTemplateDTO(
+            val generatedTemplate = GeneratedTemplateDTO(
                     id = packedImageId,
                     width=puzzleGraph.width,
                     height=puzzleGraph.height,
@@ -66,7 +66,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             )
 
             logger.info("PuzzleTemplateTask::run Saving resource")
-            val savedResource = puzzleTemplateDao.save(puzzleTemplate)
+            val savedResource = puzzleTemplateDao.save(generatedTemplate)
 
             savedResource ?: throw Exception("Saved resource was null")
 

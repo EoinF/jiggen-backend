@@ -29,4 +29,4 @@ class BackgroundFile(
 data class BackgroundFileDTO(val id: UUID? = null,
                              val name: String? = null,
                              val extension: String? = null,
-                             val links: Map<String, String>)
+                             val links: Map<String, String>? = null)

@@ -48,17 +48,6 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer, resour
                     ))
             )
         }
-
-        get("") { req, res ->
-            logger.info("GET All request handled")
-            jsonTransformer.toJson(mapOf(
-                    "description" to "Please use the /templates or /backgrounds endpoints to upload IMAGES",
-                    "links" to mapOf(
-                            "templates" to resourceMapper.templatesUrl,
-                            "backgrounds" to resourceMapper.backgroundsUrl
-                    )
-            ))
-        }
         get("/:file") { req, res ->
             logger.info("GET request handled {}", req.params(":file"))
 

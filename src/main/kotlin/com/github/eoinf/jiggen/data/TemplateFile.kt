@@ -20,7 +20,7 @@ data class TemplateFile(
     }
 
     @OneToMany(mappedBy = "templateFile", cascade = [(CascadeType.ALL)])
-    var puzzleTemplates: Set<PuzzleTemplate>? = null
+    var puzzleTemplates: Set<GeneratedTemplate>? = null
 
     constructor(templateFileDTO: TemplateFileDTO)
             : this(templateFileDTO.id, templateFileDTO.name, templateFileDTO.extension)
@@ -29,5 +29,5 @@ data class TemplateFile(
 data class TemplateFileDTO(val id: UUID? = null,
                            val name: String? = null,
                            val extension: String? = null,
-                           val puzzleTemplates: Set<PuzzleTemplateDTO>? = null,
+                           val puzzleTemplates: Set<GeneratedTemplateDTO>? = null,
                            val links: Map<String, String>? = null)
