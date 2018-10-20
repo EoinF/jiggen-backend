@@ -18,6 +18,13 @@ fun playablePuzzlesEndpoint(playablePuzzleDao: IPlayablePuzzleDao, jsonTransform
             res.setJsonContentType()
             jsonTransformer.toJson(playablePuzzleDao.get())
         }
+
+        Spark.get("/today") { req, res ->
+            logger.info("GET All Today request handled")
+            res.setJsonContentType()
+            jsonTransformer.toJson(playablePuzzleDao.getToday())
+        }
+
         Spark.get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))

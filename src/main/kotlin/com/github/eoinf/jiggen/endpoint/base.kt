@@ -13,7 +13,8 @@ fun baseEndpoint(resourceMapper: ResourceMapper, jsonTransformer: JsonTransforme
                         "backgrounds" to resourceMapper.backgroundsUrl,
                         "templates" to resourceMapper.templatesUrl,
                         "generatedTemplates" to resourceMapper.generatedTemplatesUrl,
-                        "playablePuzzles" to resourceMapper.playablePuzzlesUrl
+                        "playablePuzzles" to resourceMapper.playablePuzzlesUrl,
+                        "todaysPuzzles" to resourceMapper.todaysPuzzlesUrl
                 )
         ))
     }

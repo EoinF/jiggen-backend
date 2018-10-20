@@ -15,6 +15,7 @@ class ResourceMapper(jiggenConfiguration: JiggenConfig) {
     val atlasesUrl = "$baseUrl/${AtlasFile.RESOURCE_NAME}"
     val generatedTemplatesUrl = "$baseUrl/${GeneratedTemplate.RESOURCE_NAME}"
     val playablePuzzlesUrl = "$baseUrl/${PlayablePuzzle.RESOURCE_NAME}"
+    val todaysPuzzlesUrl = "$playablePuzzlesUrl/today"
 
     fun backgroundsUrl(id: UUID): String {
         return "$backgroundsUrl/$id"
