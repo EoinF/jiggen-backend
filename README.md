@@ -3,7 +3,38 @@
 These are instructions for getting the web app up and running.
 Using docker is the next step, but for now it is all done manually.
 
-#### Compiling the WAR file
+## Deployment on AWS Elastic Beanstalk
+
+The code is built to be deployed on AWS, but can be used with any container orchestration service, if modified
+
+### Docker Build Image
+
+The definition is inside docker-builder
+
+Running this image in a container will fetch the latest version of jiggen-backend, build it, and create a new docker
+image for deploying it.
+
+### Docker Deploy Image
+
+The definition is inside docker-deploy
+
+Running this image in a container will deploy the version of jiggen-backend installed inside it. It uses tomcat to serve
+the app
+
+### Dockerrun.aws.json
+
+A configuration used for AWS Elastic beanstalk
+
+Uploading this configuration will fetch the latest image created by docker-deploy and launch a container instance
+using it. It will also connect the app to a database
+
+
+
+## Deployment on AWS EC2 instance
+
+This is the old method of deployment. It may not work fully anymore
+
+#### Compiling the WAR file for EC2
 
 Simply run
 
