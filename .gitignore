@@ -2,9 +2,6 @@
 *.iml
 
 .gradle/
-gradle/
-gradlew
-gradlew.bat
 
 build/
 out/
