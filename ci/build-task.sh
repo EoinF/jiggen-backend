@@ -2,6 +2,6 @@
 set -x
 
 cd ..
-./gradlew war
+./gradlew war -q
 
 aws s3 cp build/libs/jiggen-backend.war s3://jiggen/build-api

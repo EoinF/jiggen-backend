@@ -13,17 +13,16 @@ buildscript {
     var hibernate_validator_version: String by extra
 
     val spring_boot_version = "2.0.1.RELEASE"
-    kotlin_version = "1.2.21"
-    spark_version = "2.5.4"
-    gson_version = "2.8.2"
+    kotlin_version = "1.3.10"
+    spark_version = "2.8.0"
+    gson_version = "2.8.5"
     log4j_version = "2.9.0"
     jiggen_version = "1.0"
-    gdx_version = "1.9.8"
-    hibernate_validator_version = "6.0.9.Final"
+    gdx_version = "1.9.9"
+    hibernate_validator_version = "6.0.13.Final"
 
     repositories {
         mavenCentral()
-        mavenLocal()
     }
     
     dependencies {
