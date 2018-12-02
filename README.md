@@ -21,12 +21,25 @@ The definition is inside docker-deploy
 Running this image in a container will deploy the version of jiggen-backend installed inside it. It uses tomcat to serve
 the app
 
-### Dockerrun.aws.json
+### Dockerrun-create.aws.json
 
 A configuration used for AWS Elastic beanstalk
 
 Uploading this configuration will fetch the latest image created by docker-deploy and launch a container instance
-using it. It will also connect the app to a database
+using it. It will also connect the app to a database and create all the tables (WARNING: Wipes the existing data)
+
+### Dockerrun-update.aws.json
+
+A configuration used for AWS Elastic beanstalk
+
+Uploading this configuration will fetch the latest image created by docker-deploy and launch a container instance
+using it. It will also connect the app to a database and update all the tables
+
+
+### Integration with AWS RDB
+
+* Create a db in the 'Configuration' tab of your Elastic Beanstalk environment
+
 
 
 
