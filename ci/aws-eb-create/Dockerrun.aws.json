@@ -9,11 +9,5 @@
       "ContainerPort": "8080"
     }
   ],
-  "Logging": "/usr/local/tomcat/logs",
-  "environment": [
-    {
-      "name": "HIBERNATE_MODE",
-      "value": "update"
-    }
-  ]
+  "Logging": "/usr/local/tomcat/logs"
 }
