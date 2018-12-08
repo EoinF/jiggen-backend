@@ -19,6 +19,7 @@ open class JiggenConfig {
     var unix: OsConfig? = null
 
     var baseUrl: String? = null
+    var allowedOrigin: String? = null
 
     val imageFolder: String
         get() {

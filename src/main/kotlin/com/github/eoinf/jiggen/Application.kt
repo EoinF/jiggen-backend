@@ -1,6 +1,7 @@
 package com.github.eoinf.jiggen
 
 import com.badlogic.gdx.utils.GdxNativesLoader
+import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.dao.AtlasDao
 import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.dao.IGeneratedTemplateDao
@@ -34,7 +35,8 @@ open class Application(
         private val puzzleTemplateDao: IGeneratedTemplateDao,
         private val jsonTransformer: JsonTransformer,
         private val resourceMapper: ResourceMapper,
-        private val atlasDao: AtlasDao
+        private val atlasDao: AtlasDao,
+        private val jiggenConfig: JiggenConfig
         )
     : SparkApplication {
 
@@ -77,7 +79,7 @@ open class Application(
             "OK"
         }
 
-        before("/*") { _, response -> response.header("Access-Control-Allow-Origin", "jiggen.app") }
+        before("/*") { _, response -> response.header("Access-Control-Allow-Origin", jiggenConfig.allowedOrigin) }
 
         baseEndpoint(resourceMapper, jsonTransformer)
         templatesEndpoint(templateDao, jsonTransformer, resourceMapper)
