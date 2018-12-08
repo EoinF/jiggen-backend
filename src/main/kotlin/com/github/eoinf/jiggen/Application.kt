@@ -1,11 +1,25 @@
 package com.github.eoinf.jiggen
 
 import com.badlogic.gdx.utils.GdxNativesLoader
-import com.github.eoinf.jiggen.dao.*
-import com.github.eoinf.jiggen.endpoint.*
+import com.github.eoinf.jiggen.dao.AtlasDao
+import com.github.eoinf.jiggen.dao.IBackgroundDao
+import com.github.eoinf.jiggen.dao.IGeneratedTemplateDao
+import com.github.eoinf.jiggen.dao.IImageDao
+import com.github.eoinf.jiggen.dao.IPlayablePuzzleDao
+import com.github.eoinf.jiggen.dao.ITemplateDao
+import com.github.eoinf.jiggen.endpoint.atlasesEndpoint
+import com.github.eoinf.jiggen.endpoint.backgroundsEndpoint
+import com.github.eoinf.jiggen.endpoint.baseEndpoint
+import com.github.eoinf.jiggen.endpoint.generatedTemplatesEndpoint
+import com.github.eoinf.jiggen.endpoint.imagesEndpoint
+import com.github.eoinf.jiggen.endpoint.playablePuzzlesEndpoint
+import com.github.eoinf.jiggen.endpoint.setJsonContentType
+import com.github.eoinf.jiggen.endpoint.templatesEndpoint
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Component
+import spark.Spark.before
 import spark.Spark.exception
+import spark.Spark.options
 import spark.servlet.SparkApplication
 
 /**
@@ -42,6 +56,28 @@ open class Application(
             )
             res.status(500)
         }
+
+        options("/*"
+        ) { request, response ->
+
+            val accessControlRequestHeaders = request
+                    .headers("Access-Control-Request-Headers")
+            if (accessControlRequestHeaders != null) {
+                response.header("Access-Control-Allow-Headers",
+                        accessControlRequestHeaders)
+            }
+
+            val accessControlRequestMethod = request
+                    .headers("Access-Control-Request-Method")
+            if (accessControlRequestMethod != null) {
+                response.header("Access-Control-Allow-Methods",
+                        accessControlRequestMethod)
+            }
+
+            "OK"
+        }
+
+        before("/*") { _, response -> response.header("Access-Control-Allow-Origin", "jiggen.app") }
 
         baseEndpoint(resourceMapper, jsonTransformer)
         templatesEndpoint(templateDao, jsonTransformer, resourceMapper)
