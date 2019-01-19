@@ -1,8 +1,10 @@
+import datetime
 import sys
 from time import sleep
 
+import dateutil.parser as date_parser
 import requests
-from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH
+from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE
 from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
@@ -22,10 +24,12 @@ def setup_template(templates_link):
 
 
 def setup_background(backgrounds_link):
-    background, headers = create_background(backgrounds_link)
+    release_date = date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc)
+
+    background, headers = create_background(backgrounds_link, release_date)
     background_link = background['links']['self']
     image_link = headers['Location']
-    print(f'Successfully created template at {background_link}')
+    print(f'Successfully created background at {background_link}')
     upload_image(image_link, BACKGROUND_FILE_PATH)
     print(f'Successfully uploaded image {BACKGROUND_FILE_PATH} at {image_link}')
 
@@ -45,7 +49,9 @@ def get_generated_template(generated_templates_link):
 
 
 def setup_playable_puzzle(playable_puzzles_link, generated_template, background):
-    playable_puzzle = create_playable_puzzle(playable_puzzles_link, generated_template['id'], background['id'])
+    release_date = date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc)
+    playable_puzzle = create_playable_puzzle(playable_puzzles_link, generated_template['id'], background['id'], release_date)
+
     print(f"""Successfully created playable puzzle 
 at {playable_puzzle['links']['self']} with
     Generated Template {generated_template['id']}

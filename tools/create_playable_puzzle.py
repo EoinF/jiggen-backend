@@ -1,12 +1,7 @@
-import datetime
-
-import dateutil.parser as date_parser
 import requests
-from config import RELEASE_DATE
 
 
-def create_playable_puzzle(endpoint, generated_template_id, background_id):
-    release_date = date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc)
+def create_playable_puzzle(endpoint, generated_template_id, background_id, release_date):
 
     payload = {
         'generatedTemplate': {

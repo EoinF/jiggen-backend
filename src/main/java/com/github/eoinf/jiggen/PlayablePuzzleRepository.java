@@ -14,4 +14,6 @@ public interface PlayablePuzzleRepository extends CrudRepository<PlayablePuzzle,
 
     @NotNull
     Iterable<PlayablePuzzle> findAllByReleaseDateBetween(Date from, Date to);
+    @NotNull
+    Iterable<PlayablePuzzle> findAllByReleaseDateBefore(Date limit);
 }

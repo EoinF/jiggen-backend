@@ -3,7 +3,14 @@ package com.github.eoinf.jiggen
 import com.github.eoinf.jiggen.PuzzleExtractor.GraphEdge
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.config.JiggenConfig
-import com.github.eoinf.jiggen.data.*
+import com.github.eoinf.jiggen.data.BackgroundFile
+import com.github.eoinf.jiggen.data.BackgroundFileDTO
+import com.github.eoinf.jiggen.data.GeneratedTemplate
+import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
+import com.github.eoinf.jiggen.data.PlayablePuzzle
+import com.github.eoinf.jiggen.data.PlayablePuzzleDTO
+import com.github.eoinf.jiggen.data.TemplateFile
+import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
 import java.nio.file.Files
@@ -118,7 +125,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
             }
         }
 
-        return BackgroundFileDTO(id, name, extension, linksMap)
+        return BackgroundFileDTO(id, name, extension, null, linksMap)
     }
 
     private fun imageExists(id: UUID, extension: String): Boolean {
@@ -165,9 +172,6 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
             }
         }
 
-       val x =PlayablePuzzleDTO(id, name, generatedTemplate, backgroundFile, created, releaseDate, linksMap)
-        logger.info("playablePuzzle: {}", x)
-
-        return x
+       return PlayablePuzzleDTO(id, name, generatedTemplate, backgroundFile, created, releaseDate, linksMap)
     }
 }

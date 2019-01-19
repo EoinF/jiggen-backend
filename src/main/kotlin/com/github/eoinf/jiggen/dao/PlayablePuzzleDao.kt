@@ -34,7 +34,7 @@ open class PlayablePuzzleDao(private val dataMapper: DataMapper) : IPlayablePuzz
     }
 
     override fun get(): List<PlayablePuzzleDTO> {
-        return playablePuzzleRepository.findAll().toList().map {
+        return playablePuzzleRepository.findAllByReleaseDateBefore(Date(Instant.now().toEpochMilli())).toList().map {
             dataMapper.toPlayablePuzzleDTO(it, depth = 1)
         }
     }

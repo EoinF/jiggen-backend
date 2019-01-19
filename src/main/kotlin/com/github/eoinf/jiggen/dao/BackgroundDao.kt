@@ -6,6 +6,7 @@ import com.github.eoinf.jiggen.data.BackgroundFile
 import com.github.eoinf.jiggen.data.BackgroundFileDTO
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import java.time.Instant
 import java.util.*
 
 interface IBackgroundDao {
@@ -28,7 +29,7 @@ class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
     }
 
     override fun get(): List<BackgroundFileDTO> {
-        return backgroundRepository.findAll().toList().map {
+        return backgroundRepository.findAllByReleaseDateBefore(Date(Instant.now().toEpochMilli())).map {
             dataMapper.toBackgroundFileDTO(it, depth = 1)
         }
     }
