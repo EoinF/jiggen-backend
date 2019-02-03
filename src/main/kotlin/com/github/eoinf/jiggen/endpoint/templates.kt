@@ -2,12 +2,15 @@ package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.ResourceMapper
+import com.github.eoinf.jiggen.dao.IGeneratedTemplateDao
 import com.github.eoinf.jiggen.dao.ITemplateDao
 import com.github.eoinf.jiggen.data.GeneratedTemplate
 import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
-import spark.Spark.*
+import spark.Spark.get
+import spark.Spark.path
+import spark.Spark.post
 import java.util.*
 
 private val logger = LogManager.getLogger()
@@ -15,7 +18,8 @@ private val logger = LogManager.getLogger()
 private const val puzzleTemplates = GeneratedTemplate.RESOURCE_NAME
 private const val templates = TemplateFile.RESOURCE_NAME
 
-fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
+fun templatesEndpoint(templateDao: ITemplateDao, generatedTemplateDao: IGeneratedTemplateDao,
+                      jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
     path("/$templates") {
         get("") { req, res ->
             logger.info("GET All request handled")
@@ -59,7 +63,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, jsonTransformer: JsonTransforme
             logger.info("GET request handled {}", req.params(":id"))
             val templateId = UUID.fromString(req.params(":id"))
             res.setJsonContentType()
-            jsonTransformer.toJson(templateDao.get(templateId)!!.puzzleTemplates)
+            jsonTransformer.toJson(generatedTemplateDao.getByTemplateId(templateId))
         }
     }
 }

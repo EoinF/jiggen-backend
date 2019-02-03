@@ -1,7 +1,11 @@
 package com.github.eoinf.jiggen.data
 
 import java.util.*
-import javax.persistence.*
+import javax.persistence.CascadeType
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.OneToMany
 
 @Entity
 data class TemplateFile(
@@ -29,5 +33,4 @@ data class TemplateFile(
 data class TemplateFileDTO(val id: UUID? = null,
                            val name: String? = null,
                            val extension: String? = null,
-                           val puzzleTemplates: Set<GeneratedTemplateDTO>? = null,
                            val links: Map<String, String>? = null)

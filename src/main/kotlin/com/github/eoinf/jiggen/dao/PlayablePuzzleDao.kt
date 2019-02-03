@@ -30,12 +30,12 @@ open class PlayablePuzzleDao(private val dataMapper: DataMapper) : IPlayablePuzz
         if (playablePuzzle == null)
             return null
         else
-            return dataMapper.toPlayablePuzzleDTO(playablePuzzle, depth = 2)
+            return dataMapper.toPlayablePuzzleDTO(playablePuzzle, false)
     }
 
     override fun get(): List<PlayablePuzzleDTO> {
         return playablePuzzleRepository.findAllByReleaseDateBefore(Date(Instant.now().toEpochMilli())).toList().map {
-            dataMapper.toPlayablePuzzleDTO(it, depth = 1)
+            dataMapper.toPlayablePuzzleDTO(it, true)
         }
     }
 
@@ -45,11 +45,11 @@ open class PlayablePuzzleDao(private val dataMapper: DataMapper) : IPlayablePuzz
         val todayEnd = Date(todayStartInstant.plus(1, ChronoUnit.DAYS).toEpochMilli())
 
         return playablePuzzleRepository.findAllByReleaseDateBetween(todayStart, todayEnd).toList().map {
-            dataMapper.toPlayablePuzzleDTO(it, depth = 1)
+            dataMapper.toPlayablePuzzleDTO(it, true)
         }
     }
 
     override fun save(puzzle: PlayablePuzzleDTO): PlayablePuzzleDTO {
-        return dataMapper.toPlayablePuzzleDTO(playablePuzzleRepository.save(PlayablePuzzle(puzzle)), depth = 1)
+        return dataMapper.toPlayablePuzzleDTO(playablePuzzleRepository.save(PlayablePuzzle(puzzle)), false)
     }
 }

@@ -25,16 +25,16 @@ class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
         if (backgroundFile == null)
             return null
         else
-            return dataMapper.toBackgroundFileDTO(backgroundFile, depth = 1)
+            return dataMapper.toBackgroundFileDTO(backgroundFile, false)
     }
 
     override fun get(): List<BackgroundFileDTO> {
         return backgroundRepository.findAllByReleaseDateBefore(Date(Instant.now().toEpochMilli())).map {
-            dataMapper.toBackgroundFileDTO(it, depth = 1)
+            dataMapper.toBackgroundFileDTO(it, true)
         }
     }
 
     override fun save(background: BackgroundFileDTO): BackgroundFileDTO {
-        return dataMapper.toBackgroundFileDTO(backgroundRepository.save(BackgroundFile(background)), depth = 1)
+        return dataMapper.toBackgroundFileDTO(backgroundRepository.save(BackgroundFile(background)), false)
     }
 }

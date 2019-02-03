@@ -45,11 +45,11 @@ fun playablePuzzlesEndpoint(playablePuzzleDao: IPlayablePuzzleDao, jsonTransform
             logger.debug("POST request handled {}", playablePuzzle)
 
             when {
-                playablePuzzle.background == null -> {
+                playablePuzzle.backgroundId == null -> {
                     res.status(400)
                     "background is required!"
                 }
-                playablePuzzle.generatedTemplate == null -> {
+                playablePuzzle.generatedTemplateId == null -> {
                     res.status(400)
                     "generatedTemplate is required!"
                 }

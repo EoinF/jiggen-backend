@@ -5,7 +5,13 @@ import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.dao.EdgeListConverter
 import com.github.eoinf.jiggen.dao.VertexDefinitionListConverter
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Convert
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.Lob
+import javax.persistence.ManyToOne
 
 @Entity
 class GeneratedTemplate(
@@ -32,8 +38,8 @@ class GeneratedTemplate(
 
     constructor(generatedTemplateDTO: GeneratedTemplateDTO) : this(generatedTemplateDTO.id, generatedTemplateDTO.width,
             generatedTemplateDTO.height, generatedTemplateDTO.vertices, generatedTemplateDTO.edges, generatedTemplateDTO.extension) {
-        if (generatedTemplateDTO.templateFile != null) {
-            this.templateFile = TemplateFile(generatedTemplateDTO.templateFile.id)
+        if (generatedTemplateDTO.templateFileId != null) {
+            this.templateFile = TemplateFile(generatedTemplateDTO.templateFileId)
         }
     }
 
@@ -43,7 +49,7 @@ class GeneratedTemplate(
 }
 
 data class GeneratedTemplateDTO(val id: UUID,
-                                val templateFile: TemplateFileDTO? = null,
+                                val templateFileId: UUID? = null,
                                 val width: Int? = null,
                                 val height: Int? = null,
                                 @Lob var vertices: Map<Int, IntRectangle>? = null,

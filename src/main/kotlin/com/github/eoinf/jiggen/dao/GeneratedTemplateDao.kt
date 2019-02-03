@@ -4,6 +4,7 @@ import com.github.eoinf.jiggen.DataMapper
 import com.github.eoinf.jiggen.GeneratedTemplateRepository
 import com.github.eoinf.jiggen.data.GeneratedTemplate
 import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
+import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import java.util.*
@@ -21,7 +22,7 @@ class GeneratedTemplateDao(private val dataMapper: DataMapper) : IGeneratedTempl
 
     override fun get(): List<GeneratedTemplateDTO> {
         return generatedTemplateRepository.findAll().toList().map {
-            dataMapper.toGeneratedTemplateDTO(it, depth=1)
+            dataMapper.toGeneratedTemplateDTO(it, true)
         }
     }
 
@@ -30,17 +31,19 @@ class GeneratedTemplateDao(private val dataMapper: DataMapper) : IGeneratedTempl
         if (puzzleTemplate == null)
             return null
         else
-            return dataMapper.toGeneratedTemplateDTO(puzzleTemplate, depth = 2)
+            return dataMapper.toGeneratedTemplateDTO(puzzleTemplate, false)
     }
 
     override fun save(generatedTemplateDTO: GeneratedTemplateDTO): GeneratedTemplateDTO? {
         val generatedTemplate = GeneratedTemplate(generatedTemplateDTO)
-        return dataMapper.toGeneratedTemplateDTO(generatedTemplateRepository.save(generatedTemplate), depth=1)
+        return dataMapper.toGeneratedTemplateDTO(generatedTemplateRepository.save(generatedTemplate), false)
     }
 
     override fun getByTemplateId(templateId: UUID): List<GeneratedTemplateDTO> {
-        return generatedTemplateRepository.findByTemplateFile(templateId).map{
-            dataMapper.toGeneratedTemplateDTO(it, depth=1)
+        return generatedTemplateRepository.findByTemplateFile(TemplateFile(templateId)).map{
+            // Set isEmbedded to false here because right now
+            // we only have one generated template per template anyway
+            dataMapper.toGeneratedTemplateDTO(it, false)
         }
     }
 }

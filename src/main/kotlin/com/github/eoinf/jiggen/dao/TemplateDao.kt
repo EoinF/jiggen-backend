@@ -26,16 +26,16 @@ open class TemplateRepoDao(private val dataMapper: DataMapper) : ITemplateDao {
         if (templateFile == null)
             return null
         else
-            return dataMapper.toTemplateFileDTO(templateFile, depth = 3)
+            return dataMapper.toTemplateFileDTO(templateFile, false)
     }
 
     override fun get(): List<TemplateFileDTO> {
         return templateRepository.findAll().toList().map {
-            dataMapper.toTemplateFileDTO(it, depth = 1)
+            dataMapper.toTemplateFileDTO(it, true)
         }
     }
 
     override fun save(template: TemplateFileDTO): TemplateFileDTO {
-        return dataMapper.toTemplateFileDTO(templateRepository.save(TemplateFile(template)), depth = 1)
+        return dataMapper.toTemplateFileDTO(templateRepository.save(TemplateFile(template)), false)
     }
 }

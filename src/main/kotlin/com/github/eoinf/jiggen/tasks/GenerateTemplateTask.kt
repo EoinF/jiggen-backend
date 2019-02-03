@@ -11,7 +11,6 @@ import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleGraphTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzlePieceTemplate
 import com.github.eoinf.jiggen.dao.GeneratedTemplateDao
 import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
-import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import java.io.File
 import java.util.*
@@ -61,7 +60,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
                     height=puzzleGraph.height,
                     edges=puzzleGraph.edges,
                     vertices=toVertexDefinitionMap(puzzleGraph.vertices),
-                    templateFile = TemplateFileDTO(imageId),
+                    templateFileId=imageId,
                     extension = "png"
             )
 

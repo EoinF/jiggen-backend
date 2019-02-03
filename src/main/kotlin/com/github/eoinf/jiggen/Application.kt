@@ -82,7 +82,7 @@ open class Application(
         before("/*") { _, response -> response.header("Access-Control-Allow-Origin", jiggenConfig.allowedOrigin) }
 
         baseEndpoint(resourceMapper, jsonTransformer)
-        templatesEndpoint(templateDao, jsonTransformer, resourceMapper)
+        templatesEndpoint(templateDao, puzzleTemplateDao, jsonTransformer, resourceMapper)
         backgroundsEndpoint(backgroundDao, jsonTransformer, resourceMapper)
         imagesEndpoint(imageDao, jsonTransformer, resourceMapper)
         generatedTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)

@@ -1,7 +1,12 @@
 package com.github.eoinf.jiggen.data
 
 import java.util.*
-import javax.persistence.*
+import javax.persistence.Column
+import javax.persistence.Entity
+import javax.persistence.Id
+import javax.persistence.JoinColumn
+import javax.persistence.ManyToOne
+import javax.persistence.Temporal
 
 @Entity
 data class PlayablePuzzle(
@@ -31,11 +36,11 @@ data class PlayablePuzzle(
 
     constructor(playablePuzzleDTO: PlayablePuzzleDTO) : this(playablePuzzleDTO.id, playablePuzzleDTO.name,
             playablePuzzleDTO.releaseDate) {
-        if (playablePuzzleDTO.generatedTemplate != null) {
-            this.generatedTemplate = GeneratedTemplate(playablePuzzleDTO.generatedTemplate.id)
+        if (playablePuzzleDTO.generatedTemplateId != null) {
+            this.generatedTemplate = GeneratedTemplate(playablePuzzleDTO.generatedTemplateId)
         }
-        if (playablePuzzleDTO.background != null) {
-            this.background = BackgroundFile(playablePuzzleDTO.background.id)
+        if (playablePuzzleDTO.backgroundId != null) {
+            this.background = BackgroundFile(playablePuzzleDTO.backgroundId)
         }
     }
 
@@ -46,8 +51,8 @@ data class PlayablePuzzle(
 
 data class PlayablePuzzleDTO(val id: UUID,
                              val name: String? = null,
-                             val generatedTemplate: GeneratedTemplateDTO? = null,
-                             val background: BackgroundFileDTO? = null,
+                             val generatedTemplateId: UUID? = null,
+                             val backgroundId: UUID? = null,
                              val created: Date? = null,
                              val releaseDate: Date? = null,
                              val links: Map<String, String>? = null)
