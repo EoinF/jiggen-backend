@@ -49,7 +49,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             TexturePacker.process(settings, puzzleFolderName, atlasFolderTempFolder, packedImageId.toString())
 
             logger.info("PuzzleTemplateTask::run Extracting atlas details")
-            moveAtlasImageToImagesFolder(atlasFolderTempFolder, imageFolder, packedImageId)
+            moveAtlasImagesToImagesFolder(atlasFolderTempFolder, imageFolder)
             moveAtlasTextToAtlasFolder(atlasFolderTempFolder, atlasFolder, packedImageId)
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
@@ -96,14 +96,8 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
      * Moves the generated atlas image to the IMAGES folder so it can be fetched as a resource
      * from the IMAGES endpoint
      */
-    private fun moveAtlasImageToImagesFolder(srcFolder: String, dstFolder: String, packedImageId: UUID) {
-        val srcFile = File("$srcFolder/$packedImageId.png")
-
-        srcFile.inputStream().use { input ->
-            File("$dstFolder/$packedImageId.png").outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
+    private fun moveAtlasImagesToImagesFolder(srcFolder: String, dstFolder: String) {
+        File(srcFolder).copyRecursively(File(dstFolder))
     }
 
     /**

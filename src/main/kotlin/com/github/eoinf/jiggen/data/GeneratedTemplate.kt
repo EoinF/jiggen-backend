@@ -55,4 +55,4 @@ data class GeneratedTemplateDTO(val id: UUID,
                                 @Lob var vertices: Map<Int, IntRectangle>? = null,
                                 @Lob var edges: List<GraphEdge>? = null,
                                 val extension: String? = null,
-                                val links: Map<String, String>? = null)
+                                val links: Map<String, Any>? = null)

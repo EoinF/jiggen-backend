@@ -13,7 +13,7 @@ import java.nio.file.Paths
 import java.util.*
 
 interface IImageDao {
-    fun get(id: UUID?, extension: String?): ImageFile?
+    fun get(id: String?, extension: String?): ImageFile?
     fun save(id: UUID, extension: String, inputStream: InputStream)
 }
 
@@ -23,7 +23,7 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
                private val generatedTaskRunner: GeneratedTaskRunner) : IImageDao {
 
 
-    override fun get(id: UUID?, extension: String?): ImageFile? {
+    override fun get(id: String?, extension: String?): ImageFile? {
         val pathname = "${config.imageFolder}/$id.$extension"
         return if (Files.exists(Paths.get(pathname))) {
             ImageFile(id, pathname)

@@ -1,7 +1,12 @@
 package com.github.eoinf.jiggen
 
 import com.github.eoinf.jiggen.config.JiggenConfig
-import com.github.eoinf.jiggen.data.*
+import com.github.eoinf.jiggen.data.AtlasFile
+import com.github.eoinf.jiggen.data.BackgroundFile
+import com.github.eoinf.jiggen.data.GeneratedTemplate
+import com.github.eoinf.jiggen.data.ImageFile
+import com.github.eoinf.jiggen.data.PlayablePuzzle
+import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.stereotype.Service
 import java.util.*
 
@@ -32,8 +37,9 @@ class ResourceMapper(jiggenConfiguration: JiggenConfig) {
         return "$generatedTemplatesUrl/$id"
     }
 
-    fun imagesUrl(id: UUID, extension: String): String {
-        return "$imagesUrl/$id.$extension"
+    fun imagesUrl(id: UUID, extension: String, offset: Int = 1): String {
+        val offsetString = if (offset > 1) offset.toString() else ""
+        return "$imagesUrl/$id$offsetString.$extension"
     }
     fun atlasUrl(id: UUID): String {
         return "$atlasesUrl/$id.atlas"

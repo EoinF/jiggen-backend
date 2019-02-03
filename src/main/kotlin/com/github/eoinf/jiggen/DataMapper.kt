@@ -25,14 +25,10 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
     fun toTemplateFileDTO(templateFile: TemplateFile, isEmbedded: Boolean): TemplateFileDTO {
         val id: UUID = templateFile.getId()
         val name = templateFile.name
-        var extension: String? = null
-
-        var linksMap: Map<String, String>? = null
-        extension = templateFile.extension
-
+        val extension: String? = templateFile.extension
 
         val childResourceName = GeneratedTemplate.RESOURCE_NAME
-        linksMap = mutableMapOf(
+        val linksMap = mutableMapOf(
                 "self" to resourceMapper.templatesUrl(id),
                 "generatedTemplates" to resourceMapper.templatesUrl(id, childResourceName)
         )
@@ -52,19 +48,26 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         val width: Int? = puzzleTemplate.width
         val height: Int? = puzzleTemplate.height
 
-        val linksMap: Map<String, String>
-
         if (!isEmbedded) {
             vertices = puzzleTemplate.vertices
             edges = puzzleTemplate.edges
         }
 
-        linksMap = mutableMapOf(
+        val linksMap = mutableMapOf<String, Any>(
                 "self" to resourceMapper.puzzleTemplatesUrl(id)
         )
+
         if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension)
         }
+        val imageLinks = mutableListOf<String>()
+        var offset = 1
+        while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset)) {
+            imageLinks.add(resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension, offset))
+            offset++
+        }
+        linksMap["images"] = imageLinks.toTypedArray()
+
         if (atlasExists(puzzleTemplate.getId())) {
             linksMap["atlas"] = resourceMapper.atlasUrl(puzzleTemplate.getId())
         }
@@ -86,15 +89,10 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
     fun toBackgroundFileDTO(backgroundFile: BackgroundFile, isEmbedded: Boolean): BackgroundFileDTO {
         val id: UUID = backgroundFile.getId()
-        var name: String? = null
-        var extension: String? = null
+        val name: String? = backgroundFile.name
+        val extension: String? = backgroundFile.extension
 
-        var linksMap: Map<String, String>? = null
-
-        name = backgroundFile.name
-        extension = backgroundFile.extension
-
-        linksMap = mutableMapOf(
+        val linksMap = mutableMapOf(
                 "self" to resourceMapper.backgroundsUrl(id)
         )
 
@@ -105,8 +103,9 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         return BackgroundFileDTO(id, name, extension, null, linksMap)
     }
 
-    private fun imageExists(id: UUID, extension: String): Boolean {
-        val pathname = "${jiggenConfiguration.imageFolder}/$id.$extension"
+    private fun imageExists(id: UUID, extension: String, offset: Int = 1): Boolean {
+        val offsetString = if (offset > 1) offset.toString() else ""
+        val pathname = "${jiggenConfiguration.imageFolder}/$id$offsetString.$extension"
         return Files.exists(Paths.get(pathname))
     }
 
@@ -122,14 +121,12 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         var created: Date? = null
         var releaseDate: Date? = null
 
-        var linksMap: Map<String, String>? = null
-
         if (!isEmbedded) {
             created = playablePuzzle.created
             releaseDate = playablePuzzle.releaseDate
         }
 
-        linksMap = mutableMapOf(
+        val linksMap = mutableMapOf(
                 "self" to resourceMapper.playablePuzzlesUrl(id)
         )
 
