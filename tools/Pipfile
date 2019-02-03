@@ -14,3 +14,4 @@ python_version = "3.6"
 [scripts]
 setup = "python setup.py setup"
 test = "python setup.py test"
+setup_templates = "python setup.py setup_templates"

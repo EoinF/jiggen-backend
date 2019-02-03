@@ -1,10 +1,12 @@
 import datetime
+import os
 import sys
+from os.path import isfile, join
 from time import sleep
 
 import dateutil.parser as date_parser
 import requests
-from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE
+from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE, TEMPLATE_DIRECTORY_PATH
 from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
@@ -12,15 +14,23 @@ from get_base_links import get_base_links
 from helpers.upload_image import upload_image
 
 
-def setup_template(templates_link):
-    template, headers = create_template(templates_link)
+def setup_template(templates_link, template_file_path):
+    template, headers = create_template(templates_link, template_file_path)
     template_link = template['links']['self']
     image_link = headers['Location']
     print(f'Successfully created template at {template_link}')
-    upload_image(image_link, TEMPLATE_FILE_PATH)
-    print(f'Successfully uploaded image {TEMPLATE_FILE_PATH} at {image_link}')
+    upload_image(image_link, template_file_path)
+    print(f'Successfully uploaded image {template_file_path} at {image_link}')
 
     return template
+
+
+def setup_templates(templates_link, templates_directory_path):
+    directory_files = [join(templates_directory_path, f) for f in os.listdir(templates_directory_path)
+                       if isfile(join(templates_directory_path, f)) and f.endswith(".png")]
+
+    for file_path in directory_files:
+        setup_template(templates_link, file_path)
 
 
 def setup_background(backgrounds_link):
@@ -50,7 +60,8 @@ def get_generated_template(generated_templates_link):
 
 def setup_playable_puzzle(playable_puzzles_link, generated_template, background):
     release_date = date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc)
-    playable_puzzle = create_playable_puzzle(playable_puzzles_link, generated_template['id'], background['id'], release_date)
+    playable_puzzle = create_playable_puzzle(playable_puzzles_link, generated_template['id'], background['id'],
+                                             release_date)
 
     print(f"""Successfully created playable puzzle 
 at {playable_puzzle['links']['self']} with
@@ -74,8 +85,12 @@ if __name__ == '__main__':
         elif arg == 'setup':
             links = get_base_links()
 
-            template = setup_template(links['templates'])
-            background = setup_background(links['backgrounds'])
+            _template = setup_template(links['templates'], TEMPLATE_FILE_PATH)
+            _background = setup_background(links['backgrounds'])
 
-            generated_template = get_generated_template(template['links']['generatedTemplates'])
-            playable_puzzle = setup_playable_puzzle(links['playablePuzzles'], generated_template, background)
+            _generated_template = get_generated_template(_template['links']['generatedTemplates'])
+            _playable_puzzle = setup_playable_puzzle(links['playablePuzzles'], _generated_template, _background)
+        elif arg == 'setup_templates':
+            links = get_base_links()
+
+            setup_templates(links['templates'], TEMPLATE_DIRECTORY_PATH)
