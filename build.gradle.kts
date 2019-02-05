@@ -17,7 +17,7 @@ buildscript {
     spark_version = "2.8.0"
     gson_version = "2.8.5"
     log4j_version = "2.9.0"
-    jiggen_version = "1.0"
+    jiggen_version = "1.1"
     gdx_version = "1.9.9"
     hibernate_validator_version = "6.0.13.Final"
 
@@ -50,6 +50,7 @@ val hibernate_validator_version: String by extra
 repositories {
     mavenCentral()
     mavenLocal()
+    maven { setUrl("https://oss.sonatype.org/content/repositories/releases/") }
 }
 
 dependencies {
@@ -71,7 +72,7 @@ dependencies {
     compile(group="org.apache.logging.log4j", name="log4j-core", version=log4j_version)
     compile(group="org.apache.logging.log4j", name="log4j-api", version=log4j_version)
 
-    compile(group="com.github.eoinf.jiggen", name="core", version=jiggen_version)
+    compile(group="com.github.eoinf.jiggen", name="core-shared", version=jiggen_version)
 
     // Required for the texture packer
     compile(group="com.badlogicgames.gdx", name="gdx-platform", version=gdx_version, classifier="natives-desktop")
