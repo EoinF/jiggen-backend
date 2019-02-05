@@ -2,11 +2,12 @@ import datetime
 import os
 import sys
 from os.path import isfile, join
+from random import randint
 from time import sleep
 
 import dateutil.parser as date_parser
 import requests
-from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE, TEMPLATE_DIRECTORY_PATH
+from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE, TEMPLATE_DIRECTORY_PATH, NAMES_FILE
 from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
@@ -14,8 +15,8 @@ from get_base_links import get_base_links
 from helpers.upload_image import upload_image
 
 
-def setup_template(templates_link, template_file_path):
-    template, headers = create_template(templates_link, template_file_path)
+def setup_template(templates_link, template_file_path, template_name='Untitled template'):
+    template, headers = create_template(templates_link, template_file_path, template_name)
     template_link = template['links']['self']
     image_link = headers['Location']
     print(f'Successfully created template at {template_link}')
@@ -26,11 +27,13 @@ def setup_template(templates_link, template_file_path):
 
 
 def setup_templates(templates_link, templates_directory_path):
+    names = open(NAMES_FILE).readlines()
     directory_files = [join(templates_directory_path, f) for f in os.listdir(templates_directory_path)
                        if isfile(join(templates_directory_path, f)) and f.endswith(".png")]
 
     for file_path in directory_files:
-        setup_template(templates_link, file_path)
+        name = names.pop(randint(0, len(names) - 1))
+        setup_template(templates_link, file_path, name.strip())
 
 
 def setup_background(backgrounds_link):
