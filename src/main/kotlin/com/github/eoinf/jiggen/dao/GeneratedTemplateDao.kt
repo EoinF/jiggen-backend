@@ -7,43 +7,49 @@ import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import spark.Request
 import java.util.*
 
 interface IGeneratedTemplateDao {
-    fun get(): List<GeneratedTemplateDTO>
-    fun get(id: UUID) : GeneratedTemplateDTO?
-    fun save(generatedTemplateDTO: GeneratedTemplateDTO) : GeneratedTemplateDTO?
-    fun getByTemplateId(templateId: UUID): List<GeneratedTemplateDTO>
+    fun get(request: Request): List<GeneratedTemplateDTO>
+    fun get(request: Request, id: UUID) : GeneratedTemplateDTO?
+    fun save(request: Request?, generatedTemplateDTO: GeneratedTemplateDTO) : GeneratedTemplateDTO?
+    fun getByTemplateId(request: Request, templateId: UUID): List<GeneratedTemplateDTO>
 }
 
 @Service
 class GeneratedTemplateDao(private val dataMapper: DataMapper) : IGeneratedTemplateDao {
     @Autowired lateinit var generatedTemplateRepository: GeneratedTemplateRepository
 
-    override fun get(): List<GeneratedTemplateDTO> {
+    override fun get(request: Request): List<GeneratedTemplateDTO> {
         return generatedTemplateRepository.findAll().toList().map {
-            dataMapper.toGeneratedTemplateDTO(it, true)
+            dataMapper.toGeneratedTemplateDTO(request, it, true)
         }
     }
 
-    override fun get(id: UUID): GeneratedTemplateDTO? {
+    override fun get(request: Request, id: UUID): GeneratedTemplateDTO? {
         val puzzleTemplate = generatedTemplateRepository.findById(id).orElse(null)
         if (puzzleTemplate == null)
             return null
         else
-            return dataMapper.toGeneratedTemplateDTO(puzzleTemplate, false)
+            return dataMapper.toGeneratedTemplateDTO(request, puzzleTemplate, false)
     }
 
-    override fun save(generatedTemplateDTO: GeneratedTemplateDTO): GeneratedTemplateDTO? {
+    override fun save(request: Request?, generatedTemplateDTO: GeneratedTemplateDTO): GeneratedTemplateDTO? {
         val generatedTemplate = GeneratedTemplate(generatedTemplateDTO)
-        return dataMapper.toGeneratedTemplateDTO(generatedTemplateRepository.save(generatedTemplate), false)
+        val savedResource = generatedTemplateRepository.save(generatedTemplate)
+        if (request != null) {
+            return dataMapper.toGeneratedTemplateDTO(request, savedResource, false)
+        } else {
+            return null
+        }
     }
 
-    override fun getByTemplateId(templateId: UUID): List<GeneratedTemplateDTO> {
+    override fun getByTemplateId(request: Request, templateId: UUID): List<GeneratedTemplateDTO> {
         return generatedTemplateRepository.findByTemplateFile(TemplateFile(templateId)).map{
             // Set isEmbedded to false here because right now
             // we only have one generated template per template anyway
-            dataMapper.toGeneratedTemplateDTO(it, false)
+            dataMapper.toGeneratedTemplateDTO(request, it, false)
         }
     }
 }

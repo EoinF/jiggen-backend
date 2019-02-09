@@ -13,6 +13,7 @@ import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
+import spark.Request
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.util.*
@@ -22,25 +23,25 @@ private val logger = LogManager.getLogger()
 @Service
 class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenConfiguration: JiggenConfig) {
 
-    fun toTemplateFileDTO(templateFile: TemplateFile, isEmbedded: Boolean): TemplateFileDTO {
+    fun toTemplateFileDTO(request: Request, templateFile: TemplateFile, isEmbedded: Boolean): TemplateFileDTO {
         val id: UUID = templateFile.getId()
         val name = templateFile.name
         val extension: String? = templateFile.extension
 
         val childResourceName = GeneratedTemplate.RESOURCE_NAME
         val linksMap = mutableMapOf(
-                "self" to resourceMapper.templatesUrl(id),
-                "generatedTemplates" to resourceMapper.templatesUrl(id, childResourceName)
+                "self" to resourceMapper.templatesUrl(request, id),
+                "generatedTemplates" to resourceMapper.templatesUrl(request, id, childResourceName)
         )
 
         if (imageExists(templateFile.getId(), templateFile.extension!!)) {
-            linksMap["image"] = resourceMapper.imagesUrl(templateFile.getId(), templateFile.extension)
+            linksMap["image"] = resourceMapper.imagesUrl(request, templateFile.getId(), templateFile.extension)
         }
 
         return TemplateFileDTO(id, name, extension, linksMap)
     }
 
-    fun toGeneratedTemplateDTO(puzzleTemplate: GeneratedTemplate, isEmbedded: Boolean): GeneratedTemplateDTO {
+    fun toGeneratedTemplateDTO(request: Request, puzzleTemplate: GeneratedTemplate, isEmbedded: Boolean): GeneratedTemplateDTO {
         val id = puzzleTemplate.getId()
         var vertices: Map<Int, IntRectangle>? = null
         var edges: List<GraphEdge>? = null
@@ -54,25 +55,25 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         }
 
         val linksMap = mutableMapOf<String, Any>(
-                "self" to resourceMapper.puzzleTemplatesUrl(id)
+                "self" to resourceMapper.puzzleTemplatesUrl(request, id)
         )
 
         if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
-            linksMap["image"] = resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension)
+            linksMap["image"] = resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension)
         }
         val imageLinks = mutableListOf<String>()
         var offset = 1
         while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset)) {
-            imageLinks.add(resourceMapper.imagesUrl(puzzleTemplate.getId(), puzzleTemplate.extension, offset))
+            imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension, offset))
             offset++
         }
         linksMap["images"] = imageLinks.toTypedArray()
 
         if (atlasExists(puzzleTemplate.getId())) {
-            linksMap["atlas"] = resourceMapper.atlasUrl(puzzleTemplate.getId())
+            linksMap["atlas"] = resourceMapper.atlasUrl(request, puzzleTemplate.getId())
         }
         if (puzzleTemplate.templateFile != null) {
-            linksMap["templateFile"] = resourceMapper.templatesUrl(puzzleTemplate.templateFile!!.getId())
+            linksMap["templateFile"] = resourceMapper.templatesUrl(request, puzzleTemplate.templateFile!!.getId())
         }
 
         return GeneratedTemplateDTO(
@@ -87,17 +88,17 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
     }
 
 
-    fun toBackgroundFileDTO(backgroundFile: BackgroundFile, isEmbedded: Boolean): BackgroundFileDTO {
+    fun toBackgroundFileDTO(request: Request, backgroundFile: BackgroundFile, isEmbedded: Boolean): BackgroundFileDTO {
         val id: UUID = backgroundFile.getId()
         val name: String? = backgroundFile.name
         val extension: String? = backgroundFile.extension
 
         val linksMap = mutableMapOf(
-                "self" to resourceMapper.backgroundsUrl(id)
+                "self" to resourceMapper.backgroundsUrl(request, id)
         )
 
         if (imageExists(backgroundFile.getId(), backgroundFile.extension!!)) {
-            linksMap["image"] = resourceMapper.imagesUrl(backgroundFile.getId(), backgroundFile.extension)
+            linksMap["image"] = resourceMapper.imagesUrl(request, backgroundFile.getId(), backgroundFile.extension)
         }
 
         return BackgroundFileDTO(id, name, extension, null, linksMap)
@@ -114,7 +115,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         return Files.exists(Paths.get(pathname))
     }
 
-    fun toPlayablePuzzleDTO(playablePuzzle: PlayablePuzzle, isEmbedded: Boolean): PlayablePuzzleDTO {
+    fun toPlayablePuzzleDTO(request: Request, playablePuzzle: PlayablePuzzle, isEmbedded: Boolean): PlayablePuzzleDTO {
         val id: UUID = playablePuzzle.getId()
         val name: String? = playablePuzzle.name
 
@@ -127,14 +128,14 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         }
 
         val linksMap = mutableMapOf(
-                "self" to resourceMapper.playablePuzzlesUrl(id)
+                "self" to resourceMapper.playablePuzzlesUrl(request, id)
         )
 
         if (playablePuzzle.generatedTemplate != null) {
-            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(playablePuzzle.generatedTemplate!!.getId())
+            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, playablePuzzle.generatedTemplate!!.getId())
         }
         if (playablePuzzle.background != null) {
-            linksMap["background"] = resourceMapper.backgroundsUrl(playablePuzzle.background!!.getId())
+            linksMap["background"] = resourceMapper.backgroundsUrl(request, playablePuzzle.background!!.getId())
         }
 
 

@@ -16,20 +16,20 @@ fun playablePuzzlesEndpoint(playablePuzzleDao: IPlayablePuzzleDao, jsonTransform
         Spark.get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
-            jsonTransformer.toJson(playablePuzzleDao.get())
+            jsonTransformer.toJson(playablePuzzleDao.get(req))
         }
 
         Spark.get("/today") { req, res ->
             logger.info("GET All Today request handled")
             res.setJsonContentType()
-            jsonTransformer.toJson(playablePuzzleDao.getToday())
+            jsonTransformer.toJson(playablePuzzleDao.getToday(req))
         }
 
         Spark.get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val playablePuzzle = playablePuzzleDao.get(id)
+            val playablePuzzle = playablePuzzleDao.get(req, id)
 
             if (playablePuzzle == null) {
                 res.status(404)
@@ -54,7 +54,7 @@ fun playablePuzzlesEndpoint(playablePuzzleDao: IPlayablePuzzleDao, jsonTransform
                     "generatedTemplate is required!"
                 }
                 else -> {
-                    val result = playablePuzzleDao.save(playablePuzzle.copy(id = UUID.randomUUID()))
+                    val result = playablePuzzleDao.save(req, playablePuzzle.copy(id = UUID.randomUUID()))
 
                     res.status(201)
                     res.setJsonContentType()

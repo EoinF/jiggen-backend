@@ -6,6 +6,7 @@ import com.github.eoinf.jiggen.data.TemplateFileDTO
 import com.github.eoinf.jiggen.exception.NoMatchingResourceEntryException
 import com.github.eoinf.jiggen.tasks.GeneratedTaskRunner
 import org.springframework.stereotype.Service
+import spark.Request
 import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
@@ -14,7 +15,7 @@ import java.util.*
 
 interface IImageDao {
     fun get(id: String?, extension: String?): ImageFile?
-    fun save(id: UUID, extension: String, inputStream: InputStream)
+    fun save(request: Request?, id: UUID, extension: String, inputStream: InputStream)
 }
 
 @Service
@@ -32,8 +33,8 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
         }
     }
 
-    override fun save(id: UUID, extension: String, inputStream: InputStream) {
-        val resource = hasMatchingResource(id)
+    override fun save(request: Request?, id: UUID, extension: String, inputStream: InputStream) {
+        val resource = hasMatchingResource(request, id)
 
         if (resource != null) {
             val file = File("${config.imageFolder}/$id.$extension")
@@ -53,7 +54,11 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
         }
     }
 
-    private fun hasMatchingResource(id: UUID): Any? {
-        return templateDao.get(id) ?: backgroundDao.get(id)
+    private fun hasMatchingResource(request: Request?, id: UUID): Any? {
+        if (request == null) {
+            return true
+        } else {
+            return templateDao.get(request, id) ?: backgroundDao.get(request, id)
+        }
     }
 }

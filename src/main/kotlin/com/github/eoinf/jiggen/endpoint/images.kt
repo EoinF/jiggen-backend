@@ -82,7 +82,7 @@ fun imagesEndpoint(imageDao: IImageDao, jsonTransformer: JsonTransformer, resour
                 jsonTransformer.toJson(mapOf("error" to "Image size must not be 0 bytes"))
             } else {
                 req.raw().inputStream.use {
-                    imageDao.save(id, ext, it)
+                    imageDao.save(req, id, ext, it)
                 }
                 res.status(HttpStatus.CREATED_201)
             }

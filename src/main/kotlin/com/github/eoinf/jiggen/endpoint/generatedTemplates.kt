@@ -16,13 +16,13 @@ fun generatedTemplatesEndpoint(generatedTemplateDao: IGeneratedTemplateDao, json
         get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
-            jsonTransformer.toJson(generatedTemplateDao.get())
+            jsonTransformer.toJson(generatedTemplateDao.get(req))
         }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val generatedTemplate = generatedTemplateDao.get(id)
+            val generatedTemplate = generatedTemplateDao.get(req, id)
 
             if (generatedTemplate == null) {
                 res.status(404)

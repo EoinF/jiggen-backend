@@ -24,13 +24,13 @@ fun templatesEndpoint(templateDao: ITemplateDao, generatedTemplateDao: IGenerate
         get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
-            jsonTransformer.toJson(templateDao.get())
+            jsonTransformer.toJson(templateDao.get(req))
         }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val template: TemplateFileDTO? = templateDao.get(id)
+            val template: TemplateFileDTO? = templateDao.get(req, id)
 
             if (template == null) {
                 res.status(404)
@@ -46,11 +46,11 @@ fun templatesEndpoint(templateDao: ITemplateDao, generatedTemplateDao: IGenerate
             logger.info("POST request handled {}", template)
 
             if (template.extension != null) {
-                val result = templateDao.save(template.copy(id=UUID.randomUUID()))
+                val result = templateDao.save(req, template.copy(id=UUID.randomUUID()))
 
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", resourceMapper.imagesUrl(result.id!!, template.extension))
+                res.header("Location", resourceMapper.imagesUrl(req, result.id!!, template.extension))
                 jsonTransformer.toJson(result)
             } else {
                 res.status(400)
@@ -63,7 +63,7 @@ fun templatesEndpoint(templateDao: ITemplateDao, generatedTemplateDao: IGenerate
             logger.info("GET request handled {}", req.params(":id"))
             val templateId = UUID.fromString(req.params(":id"))
             res.setJsonContentType()
-            jsonTransformer.toJson(generatedTemplateDao.getByTemplateId(templateId))
+            jsonTransformer.toJson(generatedTemplateDao.getByTemplateId(req, templateId))
         }
     }
 }

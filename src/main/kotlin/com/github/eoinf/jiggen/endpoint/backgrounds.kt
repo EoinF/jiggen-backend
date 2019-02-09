@@ -6,7 +6,9 @@ import com.github.eoinf.jiggen.dao.IBackgroundDao
 import com.github.eoinf.jiggen.data.BackgroundFile
 import com.github.eoinf.jiggen.data.BackgroundFileDTO
 import org.apache.logging.log4j.LogManager
-import spark.Spark.*
+import spark.Spark.get
+import spark.Spark.path
+import spark.Spark.post
 import java.util.*
 
 private val logger = LogManager.getLogger()
@@ -18,13 +20,13 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
         get("") { req, res ->
             logger.info("GET All request handled")
             res.setJsonContentType()
-            jsonTransformer.toJson(backgroundDao.get())
+            jsonTransformer.toJson(backgroundDao.get(req))
         }
         get("/:id") { req, res ->
             logger.info("GET request handled {}", req.params(":id"))
             val id = UUID.fromString(req.params(":id"))
 
-            val background: BackgroundFileDTO? = backgroundDao.get(id)
+            val background: BackgroundFileDTO? = backgroundDao.get(req, id)
 
             if (background == null) {
                 res.status(404)
@@ -40,10 +42,10 @@ fun backgroundsEndpoint(backgroundDao: IBackgroundDao, jsonTransformer: JsonTran
 
             if (background.extension != null) {
 
-                val result = backgroundDao.save(background.copy(id= UUID.randomUUID()))
+                val result = backgroundDao.save(req, background.copy(id= UUID.randomUUID()))
                 res.status(201)
                 res.setJsonContentType()
-                res.header("Location", resourceMapper.imagesUrl(result.id!!, background.extension))
+                res.header("Location", resourceMapper.imagesUrl(req, result.id!!, background.extension))
                 jsonTransformer.toJson(result)
             } else {
                 res.status(400)

@@ -65,7 +65,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             )
 
             logger.info("PuzzleTemplateTask::run Saving resource")
-            val savedResource = puzzleTemplateDao.save(generatedTemplate)
+            val savedResource = puzzleTemplateDao.save(null, generatedTemplate)
 
             savedResource ?: throw Exception("Saved resource was null")
 
