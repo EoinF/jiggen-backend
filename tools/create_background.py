@@ -1,15 +1,18 @@
+import json
+
 import requests
 from config import BACKGROUND_FILE_PATH
 from get_base_links import get_base_links
 from helpers.upload_image import upload_image
 
 
-def create_background(endpoint, release_date=None, image_file_path='template.jpg', name="Untitled background"):
-    extension = image_file_path.split('.')[-1]
+def create_background(endpoint, release_date=None, name="Untitled background",
+                      extension=None, tags=list()):
     payload = {
         'name': name,
         'extension': extension,
-        'releaseDate': release_date.isoformat()
+        'releaseDate': release_date.isoformat(),
+        'tags': json.dumps(tags)
     }
     res = requests.post(endpoint, json=payload)
 
