@@ -38,11 +38,8 @@ class GeneratedTemplateDao(private val dataMapper: DataMapper) : IGeneratedTempl
     override fun save(request: Request?, generatedTemplateDTO: GeneratedTemplateDTO): GeneratedTemplateDTO? {
         val generatedTemplate = GeneratedTemplate(generatedTemplateDTO)
         val savedResource = generatedTemplateRepository.save(generatedTemplate)
-        if (request != null) {
-            return dataMapper.toGeneratedTemplateDTO(request, savedResource, false)
-        } else {
-            return null
-        }
+
+        return dataMapper.toGeneratedTemplateDTO(request, savedResource, false)
     }
 
     override fun getByTemplateId(request: Request, templateId: UUID): List<GeneratedTemplateDTO> {

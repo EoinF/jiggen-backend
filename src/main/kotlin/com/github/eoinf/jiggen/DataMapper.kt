@@ -41,7 +41,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         return TemplateFileDTO(id, name, extension, linksMap)
     }
 
-    fun toGeneratedTemplateDTO(request: Request, puzzleTemplate: GeneratedTemplate, isEmbedded: Boolean): GeneratedTemplateDTO {
+    fun toGeneratedTemplateDTO(request: Request?, puzzleTemplate: GeneratedTemplate, isEmbedded: Boolean): GeneratedTemplateDTO {
         val id = puzzleTemplate.getId()
         var vertices: Map<Int, IntRectangle>? = null
         var edges: List<GraphEdge>? = null
@@ -53,27 +53,27 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
             vertices = puzzleTemplate.vertices
             edges = puzzleTemplate.edges
         }
+        val linksMap = mutableMapOf<String, Any>()
+        if (request != null) {
+            linksMap["self"] = resourceMapper.puzzleTemplatesUrl(request, id)
 
-        val linksMap = mutableMapOf<String, Any>(
-                "self" to resourceMapper.puzzleTemplatesUrl(request, id)
-        )
+            if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
+                linksMap["image"] = resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension)
+            }
+            val imageLinks = mutableListOf<String>()
+            var offset = 1
+            while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset)) {
+                imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension, offset))
+                offset++
+            }
+            linksMap["images"] = imageLinks.toTypedArray()
 
-        if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension!!)) {
-            linksMap["image"] = resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension)
-        }
-        val imageLinks = mutableListOf<String>()
-        var offset = 1
-        while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset)) {
-            imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension, offset))
-            offset++
-        }
-        linksMap["images"] = imageLinks.toTypedArray()
-
-        if (atlasExists(puzzleTemplate.getId())) {
-            linksMap["atlas"] = resourceMapper.atlasUrl(request, puzzleTemplate.getId())
-        }
-        if (puzzleTemplate.templateFile != null) {
-            linksMap["templateFile"] = resourceMapper.templatesUrl(request, puzzleTemplate.templateFile!!.getId())
+            if (atlasExists(puzzleTemplate.getId())) {
+                linksMap["atlas"] = resourceMapper.atlasUrl(request, puzzleTemplate.getId())
+            }
+            if (puzzleTemplate.templateFile != null) {
+                linksMap["templateFile"] = resourceMapper.templatesUrl(request, puzzleTemplate.templateFile!!.getId())
+            }
         }
 
         return GeneratedTemplateDTO(
