@@ -17,7 +17,7 @@ from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
 from get_base_links import get_base_links
-from helpers.upload_image import upload_image
+from upload_image import upload_image
 
 
 def setup_template(templates_link, template_file_path, template_name='Untitled template'):
@@ -66,7 +66,7 @@ def setup_backgrounds(backgrounds_link, release_date):
                                   for (path, data) in meta_data_with_paths]
 
     def _setup_background(path, data, release_date):
-        background, headers = create_background(backgrounds_link, release_date, data["name"], data["extension"], data["tags"])
+        background, headers = create_background(backgrounds_link, data["extension"], release_date, data["name"], data["tags"])
         image_link = headers['Location']
         upload_image(image_link, path)
         return background, release_date
@@ -84,7 +84,7 @@ def setup_backgrounds(backgrounds_link, release_date):
 
 
 def setup_background(backgrounds_link, release_date):
-    background, headers = create_background(backgrounds_link, release_date, BACKGROUND_FILE_PATH.split('.')[-1])
+    background, headers = create_background(backgrounds_link, BACKGROUND_FILE_PATH.split('.')[-1], release_date)
     background_link = background['links']['self']
     image_link = headers['Location']
     print(f'Successfully created background at {background_link}')

@@ -1,7 +1,7 @@
 import requests
-from config import TEMPLATE_FILE_PATH
+from config import TEMPLATE_FILE_PATH, BASIC_AUTH
 from get_base_links import get_base_links
-from helpers.upload_image import upload_image
+from upload_image import upload_image
 
 
 def create_template(endpoint, image_file_path='template.jpg', name="Untitled template"):
@@ -10,10 +10,10 @@ def create_template(endpoint, image_file_path='template.jpg', name="Untitled tem
         'name': name,
         'extension': extension
     }
-    res = requests.post(endpoint, json=payload)
+    res = requests.post(endpoint, json=payload, auth=BASIC_AUTH)
 
     if res.status_code != 201:
-        print(f'Failed request to {endpoint}\n{res}')
+        print(f'Failed request to {endpoint}\n{res}\n{res.text}')
         exit(1)
 
     return res.json(), res.headers

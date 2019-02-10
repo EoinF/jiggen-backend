@@ -1,5 +1,7 @@
 import requests
 
+from config import BASIC_AUTH
+
 
 def create_playable_puzzle(endpoint, generated_template_id, background_id, release_date):
     payload = {
@@ -8,10 +10,10 @@ def create_playable_puzzle(endpoint, generated_template_id, background_id, relea
         'releaseDate': release_date.isoformat()
     }
 
-    res = requests.post(endpoint, json=payload)
+    res = requests.post(endpoint, json=payload, auth=BASIC_AUTH)
 
     if res.status_code != 201:
-        print(f'Failed request to {endpoint}\n{res}')
+        print(f'Failed request to {endpoint}\n{res}\n{res.text}')
         exit(1)
 
     return res.json()

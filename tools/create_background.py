@@ -1,23 +1,23 @@
 import json
 
 import requests
-from config import BACKGROUND_FILE_PATH
+from config import BACKGROUND_FILE_PATH, BASIC_AUTH
 from get_base_links import get_base_links
-from helpers.upload_image import upload_image
+from upload_image import upload_image
 
 
-def create_background(endpoint, release_date=None, name="Untitled background",
-                      extension=None, tags=list()):
+def create_background(endpoint, extension, release_date=None, name="Untitled background",
+                      tags=list()):
     payload = {
         'name': name,
         'extension': extension,
         'releaseDate': release_date.isoformat(),
         'tags': json.dumps(tags)
     }
-    res = requests.post(endpoint, json=payload)
+    res = requests.post(endpoint, json=payload, auth=BASIC_AUTH)
 
     if res.status_code != 201:
-        print(f'Failed request to {endpoint}\n{res}')
+        print(f'Failed request to {endpoint}\n{res}\n{res.text}')
         exit(1)
 
     return res.json(), res.headers
@@ -26,7 +26,7 @@ def create_background(endpoint, release_date=None, name="Untitled background",
 if __name__ == "__main__":
     links = get_base_links()
 
-    background, headers = create_background(links['backgrounds'])
+    background, headers = create_background(links['backgrounds'], 'png')
     background_link = background['links']['self']
     image_link = headers['Location']
     print(f'Successfully created template at {background_link}')
