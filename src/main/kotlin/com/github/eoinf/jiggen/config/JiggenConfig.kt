@@ -18,8 +18,10 @@ open class JiggenConfig {
     var windows: OsConfig? = null
     var unix: OsConfig? = null
 
-    var baseUrl: String? = null
     var allowedOrigin: String? = null
+
+    var authUsername: String? = null
+    var authPassword: String? = null
 
     val imageFolder: String
         get() {

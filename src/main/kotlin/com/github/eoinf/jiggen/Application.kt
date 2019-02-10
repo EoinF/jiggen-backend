@@ -2,40 +2,23 @@ package com.github.eoinf.jiggen
 
 import com.badlogic.gdx.utils.GdxNativesLoader
 import com.github.eoinf.jiggen.config.JiggenConfig
-import com.github.eoinf.jiggen.dao.AtlasDao
-import com.github.eoinf.jiggen.dao.IBackgroundDao
-import com.github.eoinf.jiggen.dao.IGeneratedTemplateDao
-import com.github.eoinf.jiggen.dao.IImageDao
-import com.github.eoinf.jiggen.dao.IPlayablePuzzleDao
-import com.github.eoinf.jiggen.dao.ITemplateDao
-import com.github.eoinf.jiggen.endpoint.atlasesEndpoint
-import com.github.eoinf.jiggen.endpoint.backgroundsEndpoint
-import com.github.eoinf.jiggen.endpoint.baseEndpoint
-import com.github.eoinf.jiggen.endpoint.generatedTemplatesEndpoint
-import com.github.eoinf.jiggen.endpoint.imagesEndpoint
-import com.github.eoinf.jiggen.endpoint.playablePuzzlesEndpoint
 import com.github.eoinf.jiggen.endpoint.setJsonContentType
-import com.github.eoinf.jiggen.endpoint.templatesEndpoint
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Component
+import spark.Request
 import spark.Spark.before
 import spark.Spark.exception
+import spark.Spark.halt
 import spark.Spark.options
 import spark.servlet.SparkApplication
+import java.util.*
 
 /**
  * Class required for deploying as a servlet
  */
 @Component("application")
 open class Application(
-        private val puzzleDao: IPlayablePuzzleDao,
-        private val templateDao: ITemplateDao,
-        private val backgroundDao: IBackgroundDao,
-        private val imageDao: IImageDao,
-        private val puzzleTemplateDao: IGeneratedTemplateDao,
         private val jsonTransformer: JsonTransformer,
-        private val resourceMapper: ResourceMapper,
-        private val atlasDao: AtlasDao,
         private val jiggenConfig: JiggenConfig
         )
     : SparkApplication {
@@ -79,14 +62,31 @@ open class Application(
             "OK"
         }
 
-        before("/*") { _, response -> response.header("Access-Control-Allow-Origin", jiggenConfig.allowedOrigin) }
+        before("/*") {
+            request, response ->
+                if (request.requestMethod() != "GET" && !isAuthorized(request)) {
+                    halt(401, "")
+                }
+                response.header("Access-Control-Allow-Origin", jiggenConfig.allowedOrigin)
+        }
+    }
 
-        baseEndpoint(resourceMapper, jsonTransformer)
-        templatesEndpoint(templateDao, puzzleTemplateDao, jsonTransformer, resourceMapper)
-        backgroundsEndpoint(backgroundDao, jsonTransformer, resourceMapper)
-        imagesEndpoint(imageDao, jsonTransformer, resourceMapper)
-        generatedTemplatesEndpoint(puzzleTemplateDao, jsonTransformer)
-        playablePuzzlesEndpoint(puzzleDao, jsonTransformer)
-        atlasesEndpoint(atlasDao, jsonTransformer, resourceMapper)
+    private fun isAuthorized(request: Request): Boolean {
+        val authHeader: String? = request.headers("Authorization")
+        try {
+            val token = authHeader!!.split(' ')[1]
+
+            val userPass = String(
+                    Base64.getDecoder().decode(token)
+            ).split(':')
+
+            logger.info("${jiggenConfig.authUsername}===${userPass[0]}")
+            logger.info("${jiggenConfig.authPassword}===${userPass[1]}")
+            return userPass[0] == jiggenConfig.authUsername && userPass[1] == jiggenConfig.authPassword
+        } catch(ex: Exception) {
+            logger.error("Failed to authenticate with auth header: $authHeader" )
+            logger.error("Unauthorized access to ${request.url()} with ${request.requestMethod()}")
+            return false
+        }
     }
 }
