@@ -10,7 +10,7 @@ import spark.Spark.get
 class BaseApiController(resourceMapper: ResourceMapper, jsonTransformer: JsonTransformer) {
     init {
         get("/") { req, res ->
-            val baseUrl = "${req.scheme()}://${req.host()}"
+            val baseUrl = resourceMapper.baseUrl(req)
 
             res.setJsonContentType()
             jsonTransformer.toJson(mapOf(

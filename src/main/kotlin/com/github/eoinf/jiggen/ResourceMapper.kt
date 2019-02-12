@@ -32,7 +32,7 @@ class ResourceMapper {
         }
     }
 
-    fun baseUrl(request: Request) = "${request.scheme()}://${request.host()}"
+    fun baseUrl(request: Request) = "${request.headers("scheme")}://${request.host()}"
 
     fun puzzleTemplatesUrl(request: Request, id: UUID): String {
         return "${baseUrl(request)}/$generatedTemplatesUrl/$id"
