@@ -1,3 +1,4 @@
+import codecs
 import copy
 import datetime
 import json
@@ -56,9 +57,9 @@ def find_file_with_extension(original_path, extension):
 
 
 def setup_backgrounds(backgrounds_link, release_date):
-    metadata_files = open(f'{BACKGROUNDS_DIRECTORY_PATH}/order.txt')
+    metadata_files = codecs.open(join(BACKGROUNDS_DIRECTORY_PATH, 'order.txt'), 'r', 'utf-8')
 
-    background_metadata_paths = [f'{BACKGROUNDS_DIRECTORY_PATH}/{line}' for line in metadata_files.read().splitlines()]
+    background_metadata_paths = [join(BACKGROUNDS_DIRECTORY_PATH, line) for line in metadata_files.read().splitlines()]
     meta_data_list = [json.loads(open(path).read()) for path in background_metadata_paths]
     meta_data_with_paths = zip(background_metadata_paths, meta_data_list)
 
@@ -68,6 +69,8 @@ def setup_backgrounds(backgrounds_link, release_date):
     def _setup_background(path, data, release_date):
         background, headers = create_background(backgrounds_link, data["extension"], release_date, data["name"],
                                                 data["tags"], author='Peter Flanagan')
+
+        print(f'Successfully created background at {background["links"]["self"]}')
         image_link = headers['Location']
         upload_image(image_link, path)
         return background, release_date
