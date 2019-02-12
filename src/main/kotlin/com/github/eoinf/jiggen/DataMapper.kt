@@ -89,9 +89,16 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
 
     fun toBackgroundFileDTO(request: Request, backgroundFile: BackgroundFile, isEmbedded: Boolean): BackgroundFileDTO {
-        val id: UUID = backgroundFile.getId()
-        val name: String? = backgroundFile.name
-        val extension: String? = backgroundFile.extension
+        val id = backgroundFile.getId()
+        val name = backgroundFile.name!!
+        val extension = backgroundFile.extension
+        var tags: Array<String>? = null
+        var author: String? = null
+
+        if (!isEmbedded) {
+            tags = backgroundFile.tags
+            author = backgroundFile.author
+        }
 
         val linksMap = mutableMapOf(
                 "self" to resourceMapper.backgroundsUrl(request, id)
@@ -101,7 +108,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
             linksMap["image"] = resourceMapper.imagesUrl(request, backgroundFile.getId(), backgroundFile.extension)
         }
 
-        return BackgroundFileDTO(id, name, extension, null, linksMap)
+        return BackgroundFileDTO(id, name, extension, null, tags, author, linksMap)
     }
 
     private fun imageExists(id: UUID, extension: String, offset: Int = 1): Boolean {

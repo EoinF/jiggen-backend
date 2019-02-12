@@ -66,7 +66,8 @@ def setup_backgrounds(backgrounds_link, release_date):
                                   for (path, data) in meta_data_with_paths]
 
     def _setup_background(path, data, release_date):
-        background, headers = create_background(backgrounds_link, data["extension"], release_date, data["name"], data["tags"])
+        background, headers = create_background(backgrounds_link, data["extension"], release_date, data["name"],
+                                                data["tags"], author='Peter Flanagan')
         image_link = headers['Location']
         upload_image(image_link, path)
         return background, release_date
@@ -84,7 +85,8 @@ def setup_backgrounds(backgrounds_link, release_date):
 
 
 def setup_background(backgrounds_link, release_date):
-    background, headers = create_background(backgrounds_link, BACKGROUND_FILE_PATH.split('.')[-1], release_date)
+    background, headers = create_background(backgrounds_link, BACKGROUND_FILE_PATH.split('.')[-1], release_date,
+                                            tags=['hello', 'world'])
     background_link = background['links']['self']
     image_link = headers['Location']
     print(f'Successfully created background at {background_link}')

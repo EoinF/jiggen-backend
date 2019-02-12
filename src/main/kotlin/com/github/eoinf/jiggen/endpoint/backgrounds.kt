@@ -43,17 +43,18 @@ class BackgroundsController(private val backgroundDao: IBackgroundDao, private v
 
             post("") { req, res ->
                 val background = jsonTransformer.fromJson(req.body(), BackgroundFileDTO::class.java)
-
-                if (background.extension != null) {
-
+                if (background.extension == null) {
+                    res.status(400)
+                    "\"extension\" parameter is required"
+                } else if (background.name.isNullOrBlank()) {
+                    res.status(400)
+                    "\"name\" parameter is required"
+                } else {
                     val result = backgroundDao.save(req, background.copy(id = UUID.randomUUID()))
                     res.status(201)
                     res.setJsonContentType()
                     res.header("Location", resourceMapper.imagesUrl(req, result.id!!, background.extension))
                     jsonTransformer.toJson(result)
-                } else {
-                    res.status(400)
-                    "\"extension\" parameter is required"
                 }
             }
         }

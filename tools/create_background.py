@@ -1,5 +1,3 @@
-import json
-
 import requests
 from config import BACKGROUND_FILE_PATH, BASIC_AUTH
 from get_base_links import get_base_links
@@ -7,12 +5,13 @@ from upload_image import upload_image
 
 
 def create_background(endpoint, extension, release_date=None, name="Untitled background",
-                      tags=list()):
+                      tags=list(), author='unknown'):
     payload = {
         'name': name,
         'extension': extension,
         'releaseDate': release_date.isoformat(),
-        'tags': json.dumps(tags)
+        'tags': tags,
+        'author': author
     }
     res = requests.post(endpoint, json=payload, auth=BASIC_AUTH)
 
