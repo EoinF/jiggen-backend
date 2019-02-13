@@ -23,6 +23,8 @@ open class JiggenConfig {
     var authUsername: String? = null
     var authPassword: String? = null
 
+    var protocol: String = "https"
+
     val imageFolder: String
         get() {
             return if (System.getProperty("os.name").contains("Windows")) {
