@@ -56,7 +56,7 @@ def find_file_with_extension(original_path, extension):
     return f'{path_without_extension}.{extension}'
 
 
-def setup_backgrounds(backgrounds_link, release_date):
+def setup_backgrounds(backgrounds_link, base_release_date):
     metadata_files = codecs.open(join(BACKGROUNDS_DIRECTORY_PATH, 'order.txt'), 'r', 'utf-8')
 
     background_metadata_paths = [join(BACKGROUNDS_DIRECTORY_PATH, line) for line in metadata_files.read().splitlines()]
@@ -66,14 +66,15 @@ def setup_backgrounds(backgrounds_link, release_date):
     meta_data_with_image_paths = [(find_file_with_extension(path, data['extension']), data)
                                   for (path, data) in meta_data_with_paths]
 
-    def _setup_background(path, data, release_date):
-        background, headers = create_background(backgrounds_link, data["extension"], release_date, data["name"],
+    def _setup_background(path, data, _release_date):
+        background, headers = create_background(backgrounds_link, data["extension"], _release_date, data["name"],
                                                 data["tags"], author='Peter Flanagan')
 
         print(f'Successfully created background at {background["links"]["self"]}')
         image_link = headers['Location']
         upload_image(image_link, path)
-        return background, release_date
+
+        return background, _release_date
 
     def release_dates(r):
         date = r
@@ -81,7 +82,7 @@ def setup_backgrounds(backgrounds_link, release_date):
             yield date
             date += datetime.timedelta(days=1)
 
-    meta_data_with_image_paths_and_release_dates = zip(meta_data_with_image_paths, release_dates(release_date))
+    meta_data_with_image_paths_and_release_dates = zip(meta_data_with_image_paths, release_dates(base_release_date))
 
     return [_setup_background(path, data, release_d)
             for ((path, data), release_d) in meta_data_with_image_paths_and_release_dates]
@@ -123,6 +124,60 @@ at {playable_puzzle['links']['self']} with
     return playable_puzzle
 
 
+def main():
+    arg = sys.argv[1]
+    if arg == 'test':
+        print(get_base_links())
+    elif arg == 'setup':
+        links = get_base_links()
+
+        _template = setup_template(links['templates'], TEMPLATE_FILE_PATH)
+        _background = setup_background(links['backgrounds'],
+                                       date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc))
+
+        _generated_template = get_generated_template(_template['links']['generatedTemplates'])
+        _playable_puzzle = setup_playable_puzzle(links['playablePuzzles'], _generated_template, _background)
+    elif arg == 'setup_templates':
+        links = get_base_links()
+
+        setup_templates(links['templates'], TEMPLATE_DIRECTORY_PATH)
+    elif arg == 'setup_puzzles':
+        links = get_base_links()
+        playable_puzzles_endpoint = links['playablePuzzles']
+
+        templates = requests.get(links['generatedTemplates']).json()
+        templates_enhanced = [requests.get(t["links"]["self"]).json() for t in templates]
+        templates_enhanced.sort(key=lambda t: len(t["vertices"]))
+
+        print('Found the following templates with piece counts:')
+        print([len(t["vertices"]) for t in templates_enhanced])
+        print()
+
+        buckets = {
+            "0-20": [t for t in templates_enhanced if len(t["vertices"]) <= 20],
+            "21-80": [t for t in templates_enhanced if 20 < len(t["vertices"]) <= 80],
+            "81-200": [t for t in templates_enhanced if 80 < len(t["vertices"]) <= 200]
+        }
+
+        base_release_date = date_parser.parse(PUZZLE_OF_THE_DAY_START_DATE).replace(tzinfo=datetime.timezone.utc)
+        print(f'Creating puzzles starting from {base_release_date}')
+
+        backgrounds = setup_backgrounds(links['backgrounds'], base_release_date)
+
+        for _background, _release_date in backgrounds:
+            background_id = _background["id"]
+
+            print(f'Uploading 3 playable puzzles for {_background["name"]} for {_release_date}')
+
+            create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["0-20"])["id"], background_id,
+                                   _release_date)
+            create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["21-80"])["id"], background_id,
+                                   _release_date)
+            create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["81-200"])["id"], background_id,
+                                   _release_date)
+            time.sleep(1)
+
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("Usage: python {sys.argv[0]} (command)")
@@ -132,57 +187,6 @@ if __name__ == '__main__':
             setup_templates - Creates templates for each image in the configured templates folder
             setup_puzzles - Creates a playable puzzle for each image in the configured images folder
         """)
-        exit(0)
+        exit(1)
     else:
-        arg = sys.argv[1]
-        if arg == 'test':
-            print(get_base_links())
-        elif arg == 'setup':
-            links = get_base_links()
-
-            _template = setup_template(links['templates'], TEMPLATE_FILE_PATH)
-            _background = setup_background(links['backgrounds'],
-                                           date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc))
-
-            _generated_template = get_generated_template(_template['links']['generatedTemplates'])
-            _playable_puzzle = setup_playable_puzzle(links['playablePuzzles'], _generated_template, _background)
-        elif arg == 'setup_templates':
-            links = get_base_links()
-
-            setup_templates(links['templates'], TEMPLATE_DIRECTORY_PATH)
-        elif arg == 'setup_puzzles':
-            links = get_base_links()
-            playable_puzzles_endpoint = links['playablePuzzles']
-
-            templates = requests.get(links['generatedTemplates']).json()
-            templates_enhanced = [requests.get(t["links"]["self"]).json() for t in templates]
-            templates_enhanced.sort(key=lambda t: len(t["vertices"]))
-
-            print('Found the following templates with piece counts:')
-            print([len(t["vertices"]) for t in templates_enhanced])
-            print()
-
-            buckets = {
-                "0-20": [t for t in templates_enhanced if len(t["vertices"]) <= 20],
-                "21-80": [t for t in templates_enhanced if 20 < len(t["vertices"]) <= 80],
-                "81-200": [t for t in templates_enhanced if 80 < len(t["vertices"]) <= 200]
-            }
-
-            base_release_date = date_parser.parse(PUZZLE_OF_THE_DAY_START_DATE).replace(tzinfo=datetime.timezone.utc)
-            print(f'Creating puzzles starting from {base_release_date}')
-
-            backgrounds = setup_backgrounds(links['backgrounds'], base_release_date)
-
-            for _background, _release_date in backgrounds:
-                background_id = _background["id"]
-
-                print(f'Uploading 3 playable puzzles for {_background["name"]} for {_release_date}')
-
-                create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["0-20"])["id"], background_id,
-                                       _release_date)
-                create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["21-80"])["id"], background_id,
-                                       _release_date)
-                create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["81-200"])["id"], background_id,
-                                       _release_date)
-                time.sleep(1)
-
+        main()
