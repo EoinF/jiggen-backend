@@ -1,7 +1,7 @@
 package com.github.eoinf.jiggen.dao
 
 import com.github.eoinf.jiggen.JsonTransformer
-import com.github.eoinf.jiggen.PuzzleExtractor.GraphEdge
+import com.github.eoinf.jiggen.webapp.screens.models.GraphEdge
 import com.google.gson.reflect.TypeToken
 import javax.persistence.AttributeConverter
 import javax.persistence.Converter

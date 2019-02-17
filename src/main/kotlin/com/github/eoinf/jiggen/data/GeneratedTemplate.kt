@@ -1,9 +1,9 @@
 package com.github.eoinf.jiggen.data
 
-import com.github.eoinf.jiggen.PuzzleExtractor.GraphEdge
-import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.dao.EdgeListConverter
 import com.github.eoinf.jiggen.dao.VertexDefinitionListConverter
+import com.github.eoinf.jiggen.webapp.screens.models.GraphEdge
+import com.github.eoinf.jiggen.webapp.screens.models.IntRectangle
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Convert

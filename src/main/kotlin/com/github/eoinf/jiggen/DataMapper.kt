@@ -1,7 +1,5 @@
 package com.github.eoinf.jiggen
 
-import com.github.eoinf.jiggen.PuzzleExtractor.GraphEdge
-import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.IntRectangle
 import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.data.BackgroundFile
 import com.github.eoinf.jiggen.data.BackgroundFileDTO
@@ -11,6 +9,8 @@ import com.github.eoinf.jiggen.data.PlayablePuzzle
 import com.github.eoinf.jiggen.data.PlayablePuzzleDTO
 import com.github.eoinf.jiggen.data.TemplateFile
 import com.github.eoinf.jiggen.data.TemplateFileDTO
+import com.github.eoinf.jiggen.webapp.screens.models.GraphEdge
+import com.github.eoinf.jiggen.webapp.screens.models.IntRectangle
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Service
 import spark.Request
