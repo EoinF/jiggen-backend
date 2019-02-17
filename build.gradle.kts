@@ -72,7 +72,7 @@ dependencies {
     compile(group="org.apache.logging.log4j", name="log4j-core", version=log4j_version)
     compile(group="org.apache.logging.log4j", name="log4j-api", version=log4j_version)
 
-    compile(group="com.github.eoinf.jiggen", name="core-shared", version=jiggen_version)
+    compile(group="com.github.eoinf.jiggen", name="core", version=jiggen_version)
 
     // Required for the texture packer
     compile(group="com.badlogicgames.gdx", name="gdx-platform", version=gdx_version, classifier="natives-desktop")
