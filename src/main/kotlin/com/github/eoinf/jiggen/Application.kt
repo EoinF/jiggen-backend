@@ -80,8 +80,6 @@ open class Application(
                     Base64.getDecoder().decode(token)
             ).split(':')
 
-            logger.info("${jiggenConfig.authUsername}===${userPass[0]}")
-            logger.info("${jiggenConfig.authPassword}===${userPass[1]}")
             return userPass[0] == jiggenConfig.authUsername && userPass[1] == jiggenConfig.authPassword
         } catch(ex: Exception) {
             logger.error("Failed to authenticate with auth header: $authHeader" )
