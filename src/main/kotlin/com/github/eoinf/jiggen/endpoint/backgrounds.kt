@@ -2,7 +2,8 @@ package com.github.eoinf.jiggen.endpoint
 
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.ResourceMapper
-import com.github.eoinf.jiggen.dao.IBackgroundDao
+import com.github.eoinf.jiggen.dao.BackgroundDao
+import com.github.eoinf.jiggen.dao.ImageDao
 import com.github.eoinf.jiggen.data.BackgroundFile
 import com.github.eoinf.jiggen.data.BackgroundFileDTO
 import org.apache.logging.log4j.LogManager
@@ -17,8 +18,8 @@ private val logger = LogManager.getLogger()
 private const val backgrounds = BackgroundFile.RESOURCE_NAME
 
 @Controller
-class BackgroundsController(private val backgroundDao: IBackgroundDao, private val jsonTransformer: JsonTransformer,
-                            private val resourceMapper: ResourceMapper) {
+class BackgroundsController(private val backgroundDao: BackgroundDao, private val jsonTransformer: JsonTransformer,
+                            private val resourceMapper: ResourceMapper, private val imageDao: ImageDao) {
     init {
         path("/$backgrounds") {
             get("") { req, res ->
@@ -56,6 +57,16 @@ class BackgroundsController(private val backgroundDao: IBackgroundDao, private v
                     res.header("Location", resourceMapper.imagesUrl(req, result.id!!, background.extension))
                     jsonTransformer.toJson(result)
                 }
+            }
+
+            post("/createThumbnails") { request, response ->
+                backgroundDao.getAll(request).mapNotNull {
+                    imageDao.get(it.id.toString(), it.extension)
+                }.forEach {
+                    imageDao.saveThumbailImageToFile(it, it.getId())
+                }
+
+                response.status(204)
             }
         }
     }

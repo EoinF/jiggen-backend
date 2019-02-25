@@ -10,18 +10,12 @@ import spark.Request
 import java.time.Instant
 import java.util.*
 
-interface IBackgroundDao {
-    fun get(request: Request): List<BackgroundFileDTO>
-    fun get(request: Request, id: UUID): BackgroundFileDTO?
-    fun save(request: Request, background: BackgroundFileDTO): BackgroundFileDTO
-}
-
 @Service
-class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
+class BackgroundDao(private val dataMapper: DataMapper) {
     @Autowired
     lateinit var backgroundRepository: BackgroundRepository
 
-    override fun get(request: Request, id: UUID): BackgroundFileDTO? {
+    fun get(request: Request, id: UUID): BackgroundFileDTO? {
         val backgroundFile = backgroundRepository.findById(id).orElse(null)
         if (backgroundFile == null)
             return null
@@ -29,13 +23,19 @@ class BackgroundRepoDao(private val dataMapper: DataMapper) : IBackgroundDao {
             return dataMapper.toBackgroundFileDTO(request, backgroundFile, false)
     }
 
-    override fun get(request: Request): List<BackgroundFileDTO> {
+    fun get(request: Request): List<BackgroundFileDTO> {
         return backgroundRepository.findAllByReleaseDateBefore(Date(Instant.now().toEpochMilli())).map {
             dataMapper.toBackgroundFileDTO(request, it, true)
         }
     }
 
-    override fun save(request: Request, background: BackgroundFileDTO): BackgroundFileDTO {
+    fun getAll(request: Request): List<BackgroundFileDTO> {
+        return backgroundRepository.findAll().map {
+            dataMapper.toBackgroundFileDTO(request, it, true)
+        }
+    }
+
+    fun save(request: Request, background: BackgroundFileDTO): BackgroundFileDTO {
         return dataMapper.toBackgroundFileDTO(request, backgroundRepository.save(BackgroundFile(background)), false)
     }
 }

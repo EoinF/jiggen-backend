@@ -28,7 +28,7 @@ interface IImageDao {
 
 @Service
 class ImageDao(private val config: JiggenConfig, private val templateDao: ITemplateDao,
-               private val backgroundDao: IBackgroundDao,
+               private val backgroundDao: BackgroundDao,
                private val generatedTaskRunner: GeneratedTaskRunner) : IImageDao {
 
 
@@ -51,12 +51,16 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
             if (resource is TemplateFileDTO) {
                 generatedTaskRunner.generateNewTemplate(id, file.absolutePath)
             } else if (resource is BackgroundFileDTO) {
-                file.inputStream().use {
-                    saveCompressedImage("${config.imageFolder}/$id-compressed.jpg", resizeImage(it))
-                }
+                //saveThumbailImageToFile(file, id)
             }
         } else {
             throw NoMatchingResourceEntryException("Corresponding image entry does not exist")
+        }
+    }
+
+    fun saveThumbailImageToFile(file: File, id: UUID) {
+        file.inputStream().use {
+            saveCompressedImage("${config.imageFolder}/$id-compressed.jpg", resizeImage(it))
         }
     }
 
