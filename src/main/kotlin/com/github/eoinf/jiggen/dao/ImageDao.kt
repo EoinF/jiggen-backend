@@ -51,7 +51,7 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
             if (resource is TemplateFileDTO) {
                 generatedTaskRunner.generateNewTemplate(id, file.absolutePath)
             } else if (resource is BackgroundFileDTO) {
-                //saveThumbailImageToFile(file, id)
+                saveThumbailImageToFile(file, id)
             }
         } else {
             throw NoMatchingResourceEntryException("Corresponding image entry does not exist")

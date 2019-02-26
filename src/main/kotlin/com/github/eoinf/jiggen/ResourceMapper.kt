@@ -38,9 +38,8 @@ class ResourceMapper(val jiggenConfig: JiggenConfig) {
         return "${baseUrl(request)}/$generatedTemplatesUrl/$id"
     }
 
-    fun imagesUrl(request: Request, id: UUID, extension: String, offset: Int = 1): String {
-        val offsetString = if (offset > 1) offset.toString() else ""
-        return "${baseUrl(request)}/$imagesUrl/$id$offsetString.$extension"
+    fun imagesUrl(request: Request, id: UUID, extension: String, offset: String = ""): String {
+        return "${baseUrl(request)}/$imagesUrl/$id$offset.$extension"
     }
     fun atlasUrl(request: Request, id: UUID): String {
         return "${baseUrl(request)}/$atlasesUrl/$id.atlas"

@@ -61,9 +61,12 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
                 linksMap["image"] = resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension)
             }
             val imageLinks = mutableListOf<String>()
-            var offset = 1
-            while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset)) {
-                imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension, offset))
+            if (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension)) {
+                imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension))
+            }
+            var offset = 2
+            while (imageExists(puzzleTemplate.getId(), puzzleTemplate.extension, offset.toString())) {
+                imageLinks.add(resourceMapper.imagesUrl(request, puzzleTemplate.getId(), puzzleTemplate.extension, offset.toString()))
                 offset++
             }
             linksMap["images"] = imageLinks.toTypedArray()
@@ -91,7 +94,7 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
     fun toBackgroundFileDTO(request: Request, backgroundFile: BackgroundFile, isEmbedded: Boolean): BackgroundFileDTO {
         val id = backgroundFile.getId()
         val name = backgroundFile.name!!
-        val extension = backgroundFile.extension
+        val extension = backgroundFile.extension!!
         var tags: Array<String>? = null
         var author: String? = null
 
@@ -104,16 +107,20 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
                 "self" to resourceMapper.backgroundsUrl(request, id)
         )
 
-        if (imageExists(backgroundFile.getId(), backgroundFile.extension!!)) {
+        if (imageExists(backgroundFile.getId(), backgroundFile.extension)) {
             linksMap["image"] = resourceMapper.imagesUrl(request, backgroundFile.getId(), backgroundFile.extension)
+        }
+
+        if (imageExists(backgroundFile.getId(), backgroundFile.extension, "-compressed")) {
+            linksMap["image-compressed"] = resourceMapper.imagesUrl(request, backgroundFile.getId(),
+                    backgroundFile.extension, "-compressed")
         }
 
         return BackgroundFileDTO(id, name, extension, null, tags, author, linksMap)
     }
 
-    private fun imageExists(id: UUID, extension: String, offset: Int = 1): Boolean {
-        val offsetString = if (offset > 1) offset.toString() else ""
-        val pathname = "${jiggenConfiguration.imageFolder}/$id$offsetString.$extension"
+    private fun imageExists(id: UUID, extension: String, offset: String = ""): Boolean {
+        val pathname = "${jiggenConfiguration.imageFolder}/$id$offset.$extension"
         return Files.exists(Paths.get(pathname))
     }
 
