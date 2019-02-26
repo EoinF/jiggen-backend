@@ -13,7 +13,7 @@ from time import sleep
 import dateutil.parser as date_parser
 import requests
 from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE, TEMPLATE_DIRECTORY_PATH, \
-    NAMES_FILE, USED_NAMES_FILE, BACKGROUNDS_DIRECTORY_PATH, PUZZLE_OF_THE_DAY_START_DATE
+    NAMES_FILE, USED_NAMES_FILE, BACKGROUNDS_DIRECTORY_PATH, PUZZLE_OF_THE_DAY_START_DATE, BASIC_AUTH
 from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
@@ -43,9 +43,10 @@ def setup_templates(templates_link, templates_directory_path):
 
     for file_path in directory_files:
         name = names_remaining.pop(randint(0, len(names_remaining) - 1))
-        setup_template(templates_link, file_path, name.strip())
-        # Don't overload the server with requests
-        time.sleep(1)
+        _template = setup_template(templates_link, file_path, name.strip())
+
+        # Wait and fetch the generated template to avoid overloading the server with requests
+        get_generated_template(_template["links"]["generatedTemplates"], 50)
 
     with open(USED_NAMES_FILE, 'w') as f:
         f.write("\n".join([n for n in names if n not in names_remaining]))
@@ -100,14 +101,14 @@ def setup_background(backgrounds_link, release_date):
     return background
 
 
-def get_generated_template(generated_templates_link):
+def get_generated_template(generated_templates_link, max_retries=10):
     generated_templates = []
-    retries = 10
-    while len(generated_templates) == 0 and retries > 0:
+    retries = 1
+    while len(generated_templates) == 0 and retries < max_retries:
         generated_templates = requests.get(url=generated_templates_link).json()
-        print(f'No generated template yet. Sleeping for {100 * retries}ms...')
-        sleep(0.1 * retries)
-        retries -= 1
+        print(f'No generated template yet. Sleeping for {500 * retries}ms...')
+        sleep(0.5 * retries)
+        retries += 1
 
     return generated_templates[0]
 
@@ -123,6 +124,9 @@ at {playable_puzzle['links']['self']} with
     and Background {background['id']}""")
     return playable_puzzle
 
+
+def create_thumbnails(backgrounds_endpoint):
+    requests.post(f'{backgrounds_endpoint}/createThumbnails', auth=BASIC_AUTH)
 
 def main():
     arg = sys.argv[1]
@@ -176,6 +180,9 @@ def main():
             create_playable_puzzle(playable_puzzles_endpoint, random.choice(buckets["81-200"])["id"], background_id,
                                    _release_date)
             time.sleep(1)
+    elif arg == 'create_thumbnails':
+        links = get_base_links()
+        create_thumbnails(links['backgrounds'])
 
 
 if __name__ == '__main__':
@@ -186,6 +193,7 @@ if __name__ == '__main__':
             setup - Creates a template, a background and a playable puzzle
             setup_templates - Creates templates for each image in the configured templates folder
             setup_puzzles - Creates a playable puzzle for each image in the configured images folder
+            create_thumbnails - Creates a thumbnail for each background
         """)
         exit(1)
     else:
