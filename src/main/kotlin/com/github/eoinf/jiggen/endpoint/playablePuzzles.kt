@@ -18,14 +18,13 @@ class PlayablePuzzleController(playablePuzzleDao: IPlayablePuzzleDao, jsonTransf
         Spark.path("/$playablePuzzles") {
             Spark.get("") { req, res ->
                 logger.info("GET All request handled")
-                res.setJsonContentType()
-                jsonTransformer.toJson(playablePuzzleDao.get(req))
+                res.setGzipEncoding()
+                res.setupJsonResponse(playablePuzzleDao.get(req), jsonTransformer)
             }
 
             Spark.get("/today") { req, res ->
                 logger.info("GET All Today request handled")
-                res.setJsonContentType()
-                jsonTransformer.toJson(playablePuzzleDao.getToday(req))
+                res.setupJsonResponse(playablePuzzleDao.getToday(req), jsonTransformer)
             }
 
             Spark.get("/:id") { req, res ->
@@ -38,8 +37,7 @@ class PlayablePuzzleController(playablePuzzleDao: IPlayablePuzzleDao, jsonTransf
                     res.status(404)
                     "Playable puzzle not found"
                 } else {
-                    res.setJsonContentType()
-                    jsonTransformer.toJson(playablePuzzle)
+                    res.setupJsonResponse(playablePuzzle, jsonTransformer)
                 }
             }
 
@@ -60,11 +58,11 @@ class PlayablePuzzleController(playablePuzzleDao: IPlayablePuzzleDao, jsonTransf
                         val result = playablePuzzleDao.save(req, playablePuzzle.copy(id = UUID.randomUUID()))
 
                         res.status(201)
-                        res.setJsonContentType()
-                        jsonTransformer.toJson(result)
+                        res.setupJsonResponse(result, jsonTransformer)
                     }
                 }
             }
         }
     }
 }
+

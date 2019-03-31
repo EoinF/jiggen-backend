@@ -24,8 +24,8 @@ class BackgroundsController(private val backgroundDao: BackgroundDao, private va
         path("/$backgrounds") {
             get("") { req, res ->
                 logger.info("GET All request handled")
-                res.setJsonContentType()
-                jsonTransformer.toJson(backgroundDao.get(req))
+                res.setGzipEncoding()
+                res.setupJsonResponse(backgroundDao.get(req), jsonTransformer)
             }
             get("/:id") { req, res ->
                 logger.info("GET request handled {}", req.params(":id"))
@@ -37,8 +37,8 @@ class BackgroundsController(private val backgroundDao: BackgroundDao, private va
                     res.status(404)
                     ""
                 } else {
-                    res.setJsonContentType()
-                    jsonTransformer.toJson(background)
+                    res.setGzipEncoding()
+                    res.setupJsonResponse(background, jsonTransformer)
                 }
             }
 
@@ -53,9 +53,10 @@ class BackgroundsController(private val backgroundDao: BackgroundDao, private va
                 } else {
                     val result = backgroundDao.save(req, background.copy(id = UUID.randomUUID()))
                     res.status(201)
-                    res.setJsonContentType()
+
+                    res.setGzipEncoding()
                     res.header("Location", resourceMapper.imagesUrl(req, result.id!!, background.extension))
-                    jsonTransformer.toJson(result)
+                    res.setupJsonResponse(result, jsonTransformer)
                 }
             }
 

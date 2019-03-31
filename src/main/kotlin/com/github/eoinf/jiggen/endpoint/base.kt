@@ -12,8 +12,8 @@ class BaseApiController(resourceMapper: ResourceMapper, jsonTransformer: JsonTra
         get("/") { req, res ->
             val baseUrl = resourceMapper.baseUrl(req)
 
-            res.setJsonContentType()
-            jsonTransformer.toJson(mapOf(
+
+            res.setupJsonResponse(mapOf(
                     "description" to "This resource manages templates and cached puzzles for the jiggen game",
                     "links" to mapOf(
                             "backgrounds" to "$baseUrl/${resourceMapper.backgroundsUrl}",
@@ -22,7 +22,7 @@ class BaseApiController(resourceMapper: ResourceMapper, jsonTransformer: JsonTra
                             "playablePuzzles" to "$baseUrl/${resourceMapper.playablePuzzlesUrl}",
                             "todaysPuzzles" to "$baseUrl/${resourceMapper.todaysPuzzlesUrl}"
                     )
-            ))
+            ), jsonTransformer)
         }
     }
 }

@@ -1,6 +1,7 @@
 package com.github.eoinf.jiggen.endpoint
 
 
+import com.github.eoinf.jiggen.JsonTransformer
 import spark.Response
 
 fun Response.setJsonContentType() {
@@ -13,4 +14,15 @@ fun Response.setPlainTextContentType() {
 
 fun Response.setImageContentType(extension: String) {
     this.header("Content-Type", "image/$extension")
+}
+
+fun Response.setGzipEncoding() {
+    this.header("Content-Encoding", "gzip")
+}
+
+fun Response.setupJsonResponse(body: Any, jsonTransformer: JsonTransformer): String {
+    this.setJsonContentType()
+    val jsonString = jsonTransformer.toJson(body)
+    this.header("Content-Length", jsonString.length.toString())
+    return jsonString
 }

@@ -2,7 +2,7 @@ package com.github.eoinf.jiggen
 
 import com.badlogic.gdx.utils.GdxNativesLoader
 import com.github.eoinf.jiggen.config.JiggenConfig
-import com.github.eoinf.jiggen.endpoint.setJsonContentType
+import com.github.eoinf.jiggen.endpoint.setupJsonResponse
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Component
 import spark.Request
@@ -33,10 +33,10 @@ open class Application(
 
         exception(Exception::class.java) { e, req, res ->
             e.printStackTrace()
-            res.setJsonContentType()
+
             res.body(
-                    jsonTransformer.toJson(
-                            mapOf("error" to e.message)
+                    res.setupJsonResponse(
+                            mapOf("error" to e.message), jsonTransformer
                     )
             )
             res.status(500)

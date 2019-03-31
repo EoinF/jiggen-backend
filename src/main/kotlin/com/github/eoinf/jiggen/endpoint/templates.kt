@@ -26,8 +26,8 @@ class TemplateController(templateDao: ITemplateDao, generatedTemplateDao: IGener
         path("/$templates") {
             get("") { req, res ->
                 logger.info("GET All request handled")
-                res.setJsonContentType()
-                jsonTransformer.toJson(templateDao.get(req))
+                res.setGzipEncoding()
+                res.setupJsonResponse(templateDao.get(req), jsonTransformer)
             }
             get("/:id") { req, res ->
                 logger.info("GET request handled {}", req.params(":id"))
@@ -39,8 +39,8 @@ class TemplateController(templateDao: ITemplateDao, generatedTemplateDao: IGener
                     res.status(404)
                     ""
                 } else {
-                    res.setJsonContentType()
-                    jsonTransformer.toJson(template)
+                    res.setGzipEncoding()
+                    res.setupJsonResponse(template, jsonTransformer)
                 }
             }
             post("") { req, res ->
@@ -52,9 +52,9 @@ class TemplateController(templateDao: ITemplateDao, generatedTemplateDao: IGener
                     val result = templateDao.save(req, template.copy(id = UUID.randomUUID()))
 
                     res.status(201)
-                    res.setJsonContentType()
+                    res.setGzipEncoding()
                     res.header("Location", resourceMapper.imagesUrl(req, result.id!!, template.extension))
-                    jsonTransformer.toJson(result)
+                    res.setupJsonResponse(result, jsonTransformer)
                 } else {
                     res.status(400)
                     ""
@@ -65,8 +65,8 @@ class TemplateController(templateDao: ITemplateDao, generatedTemplateDao: IGener
             get("") { req, res ->
                 logger.info("GET request handled {}", req.params(":id"))
                 val templateId = UUID.fromString(req.params(":id"))
-                res.setJsonContentType()
-                jsonTransformer.toJson(generatedTemplateDao.getByTemplateId(req, templateId))
+                res.setGzipEncoding()
+                res.setupJsonResponse(generatedTemplateDao.getByTemplateId(req, templateId), jsonTransformer)
             }
         }
     }

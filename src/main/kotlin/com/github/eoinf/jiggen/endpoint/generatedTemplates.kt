@@ -18,8 +18,8 @@ class GeneratedTemplatesController(generatedTemplateDao: IGeneratedTemplateDao, 
         path("/$puzzleTemplates") {
             get("") { req, res ->
                 logger.info("GET All request handled")
-                res.setJsonContentType()
-                jsonTransformer.toJson(generatedTemplateDao.get(req))
+                res.setGzipEncoding()
+                res.setupJsonResponse(generatedTemplateDao.get(req), jsonTransformer)
             }
             get("/:id") { req, res ->
                 logger.info("GET request handled {}", req.params(":id"))
@@ -31,8 +31,8 @@ class GeneratedTemplatesController(generatedTemplateDao: IGeneratedTemplateDao, 
                     res.status(404)
                     ""
                 } else {
-                    res.setJsonContentType()
-                    jsonTransformer.toJson(generatedTemplate)
+                    res.setGzipEncoding()
+                    res.setupJsonResponse(generatedTemplate, jsonTransformer)
                 }
             }
         }

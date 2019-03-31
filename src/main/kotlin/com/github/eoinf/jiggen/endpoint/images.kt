@@ -28,11 +28,11 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
                 logger.error("/$IMAGES endpoint: ", e)
                 res.status(HttpStatus.BAD_REQUEST_400)
 
-                res.setJsonContentType()
-                res.body(jsonTransformer.toJson(
+
+                res.body(res.setupJsonResponse(
                         mapOf("error" to
                                 "Expected path parameter in the format \"<id>.<extension>\" e.g. /IMAGES/1234.png"
-                        ))
+                        ), jsonTransformer)
                 )
             }
             exception(FileNotFoundException::class.java) { e, req, res ->
@@ -43,8 +43,8 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
             exception(NoMatchingResourceEntryException::class.java) { e, req, res ->
                 logger.error("/$IMAGES endpoint: ", e)
                 res.status(HttpStatus.BAD_REQUEST_400)
-                res.setJsonContentType()
-                res.body(jsonTransformer.toJson(
+
+                res.body(res.setupJsonResponse(
                         mapOf(
                                 "error" to "Expected corresponding resource to exist. Use /templates or " +
                                         "/backgrounds endpoint to create the metadata first",
@@ -52,7 +52,7 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
                                         "templates" to resourceMapper.templatesUrl,
                                         "backgrounds" to resourceMapper.backgroundsUrl
                                 )
-                        ))
+                        ), jsonTransformer)
                 )
             }
             get("/:file") { req, res ->
@@ -65,7 +65,9 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
 
                 val image: File? = imageDao.get(id, ext)
 
+
                 if (image != null) {
+                    res.header("Content-Length", image.length().toString())
                     res.setImageContentType(ext)
                     image.inputStream()
                 } else {
@@ -83,7 +85,7 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
 
                 if (req.contentLength() == 0) {
                     res.status(HttpStatus.BAD_REQUEST_400)
-                    jsonTransformer.toJson(mapOf("error" to "Image size must not be 0 bytes"))
+                    res.setupJsonResponse(mapOf("error" to "Image size must not be 0 bytes"), jsonTransformer)
                 } else {
                     req.raw().inputStream.use {
                         imageDao.save(req, id, ext, it)
