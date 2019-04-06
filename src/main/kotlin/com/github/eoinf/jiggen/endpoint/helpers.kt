@@ -22,7 +22,6 @@ fun Response.setGzipEncoding() {
 
 fun Response.setupJsonResponse(body: Any, jsonTransformer: JsonTransformer): String {
     this.setJsonContentType()
-    val jsonString = jsonTransformer.toJson(body)
-    this.header("Content-Length", jsonString.length.toString())
-    return jsonString
+    this.header("Transfer-Encoding", "chunked")
+    return jsonTransformer.toJson(body)
 }
