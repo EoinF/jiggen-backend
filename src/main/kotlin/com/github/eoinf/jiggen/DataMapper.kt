@@ -116,6 +116,11 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
                     backgroundFile.extension, "-compressed")
         }
 
+        if (imageExists(backgroundFile.getId(), backgroundFile.extension, "-thumbnail48x48")) {
+            linksMap["image-48x48"] = resourceMapper.imagesUrl(request, backgroundFile.getId(),
+                    backgroundFile.extension, "-thumbnail48x48")
+        }
+
         return BackgroundFileDTO(id, name, extension, null, tags, author, linksMap)
     }
 

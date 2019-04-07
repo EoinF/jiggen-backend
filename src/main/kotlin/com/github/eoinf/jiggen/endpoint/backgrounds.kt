@@ -64,7 +64,8 @@ class BackgroundsController(private val backgroundDao: BackgroundDao, private va
                 backgroundDao.getAll(request).mapNotNull {
                     imageDao.get(it.id.toString(), it.extension)
                 }.forEach {
-                    imageDao.saveThumbailImageToFile(it, it.getId())
+                    imageDao.saveCompressedImageToFile(it, it.getId())
+                    imageDao.saveThumbnailToFile(it, it.getId())
                 }
 
                 response.status(204)
