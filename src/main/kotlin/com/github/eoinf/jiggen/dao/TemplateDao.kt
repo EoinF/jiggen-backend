@@ -30,6 +30,7 @@ open class TemplateRepoDao(private val dataMapper: DataMapper) : ITemplateDao {
             return dataMapper.toTemplateFileDTO(request, templateFile, false)
     }
 
+    @Transactional
     override fun get(request: Request): List<TemplateFileDTO> {
         return templateRepository.findAll().toList().map {
             dataMapper.toTemplateFileDTO(request, it, true)
