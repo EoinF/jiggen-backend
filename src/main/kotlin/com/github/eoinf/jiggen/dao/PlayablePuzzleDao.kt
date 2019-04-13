@@ -40,6 +40,7 @@ open class PlayablePuzzleDao(private val dataMapper: DataMapper) : IPlayablePuzz
         }
     }
 
+    @Transactional
     override fun getToday(request: Request): List<PlayablePuzzleDTO> {
         val todayStartInstant = Instant.now().truncatedTo(ChronoUnit.DAYS)
         val todayStart = Date(todayStartInstant.toEpochMilli())

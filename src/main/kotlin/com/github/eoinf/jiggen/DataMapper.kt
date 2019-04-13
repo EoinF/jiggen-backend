@@ -155,8 +155,6 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
         if (playablePuzzle.generatedTemplate != null) {
             linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, playablePuzzle.generatedTemplate!!.getId())
-        }
-        if (playablePuzzle.generatedTemplate != null) {
             linksMap["template"] = resourceMapper.templatesUrl(request, playablePuzzle.generatedTemplate!!.templateFile!!.getId())
         }
         if (playablePuzzle.background != null) {
