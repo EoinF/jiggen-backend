@@ -61,13 +61,5 @@ class TemplateController(templateDao: ITemplateDao, generatedTemplateDao: IGener
                 }
             }
         }
-        path("/$templates/:id/$puzzleTemplates") {
-            get("") { req, res ->
-                logger.info("GET request handled {}", req.params(":id"))
-                val templateId = UUID.fromString(req.params(":id"))
-                res.setGzipEncoding()
-                res.setupJsonResponse(generatedTemplateDao.getByTemplateId(req, templateId), jsonTransformer)
-            }
-        }
     }
 }

@@ -28,11 +28,14 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         val name = templateFile.name
         val extension: String? = templateFile.extension
 
-        val childResourceName = GeneratedTemplate.RESOURCE_NAME
         val linksMap = mutableMapOf(
-                "self" to resourceMapper.templatesUrl(request, id),
-                "generatedTemplates" to resourceMapper.templatesUrl(request, id, childResourceName)
+                "self" to resourceMapper.templatesUrl(request, id)
         )
+
+        if (templateFile.puzzleTemplates != null && templateFile.puzzleTemplates!!.isNotEmpty()) {
+            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, (templateFile.puzzleTemplates!!)
+                    .first().getId())
+        }
 
         if (imageExists(templateFile.getId(), templateFile.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(request, templateFile.getId(), templateFile.extension)
@@ -152,6 +155,9 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
 
         if (playablePuzzle.generatedTemplate != null) {
             linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, playablePuzzle.generatedTemplate!!.getId())
+        }
+        if (playablePuzzle.generatedTemplate != null) {
+            linksMap["template"] = resourceMapper.templatesUrl(request, playablePuzzle.generatedTemplate!!.templateFile!!.getId())
         }
         if (playablePuzzle.background != null) {
             linksMap["background"] = resourceMapper.backgroundsUrl(request, playablePuzzle.background!!.getId())
