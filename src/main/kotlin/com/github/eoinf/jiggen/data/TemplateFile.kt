@@ -33,4 +33,5 @@ data class TemplateFile(
 data class TemplateFileDTO(val id: UUID? = null,
                            val name: String? = null,
                            val extension: String? = null,
+                           val pieces: Int? = null,
                            val links: Map<String, String>? = null)

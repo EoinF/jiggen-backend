@@ -28,20 +28,23 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
         val name = templateFile.name
         val extension: String? = templateFile.extension
 
+        var pieces: Int? = null
+
         val linksMap = mutableMapOf(
                 "self" to resourceMapper.templatesUrl(request, id)
         )
 
         if (templateFile.puzzleTemplates != null && templateFile.puzzleTemplates!!.isNotEmpty()) {
-            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, (templateFile.puzzleTemplates!!)
-                    .first().getId())
+            val generatedTemplate = templateFile.puzzleTemplates!!.first()
+            pieces = generatedTemplate.vertices!!.size
+            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, generatedTemplate.getId())
         }
 
         if (imageExists(templateFile.getId(), templateFile.extension!!)) {
             linksMap["image"] = resourceMapper.imagesUrl(request, templateFile.getId(), templateFile.extension)
         }
 
-        return TemplateFileDTO(id, name, extension, linksMap)
+        return TemplateFileDTO(id, name, extension, pieces, linksMap)
     }
 
     fun toGeneratedTemplateDTO(request: Request?, puzzleTemplate: GeneratedTemplate, isEmbedded: Boolean): GeneratedTemplateDTO {

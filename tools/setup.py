@@ -46,7 +46,7 @@ def setup_templates(templates_link, templates_directory_path):
         _template = setup_template(templates_link, file_path, name.strip())
 
         # Wait and fetch the generated template to avoid overloading the server with requests
-        get_generated_template(_template["links"]["generatedTemplates"], 50)
+        get_generated_template(_template, 50)
 
     with open(USED_NAMES_FILE, 'w') as f:
         f.write("\n".join([n for n in names if n not in names_remaining]))
@@ -101,16 +101,15 @@ def setup_background(backgrounds_link, release_date):
     return background
 
 
-def get_generated_template(generated_templates_link, max_retries=10):
-    generated_templates = []
+def get_generated_template(template, max_retries=10):
     retries = 1
-    while len(generated_templates) == 0 and retries < max_retries:
-        generated_templates = requests.get(url=generated_templates_link).json()
+    while 'generatedTemplate' not in template['links'] and retries < max_retries:
+        template = requests.get(url=template['links']['self']).json()
         print(f'No generated template yet. Sleeping for {500 * retries}ms...')
         sleep(0.5 * retries)
         retries += 1
 
-    return generated_templates[0]
+    return requests.get(url=template['links']['generatedTemplate']).json()
 
 
 def setup_playable_puzzle(playable_puzzles_link, generated_template, background):
@@ -139,7 +138,7 @@ def main():
         _background = setup_background(links['backgrounds'],
                                        date_parser.parse(RELEASE_DATE).replace(tzinfo=datetime.timezone.utc))
 
-        _generated_template = get_generated_template(_template['links']['generatedTemplates'])
+        _generated_template = get_generated_template(_template)
         _playable_puzzle = setup_playable_puzzle(links['playablePuzzles'], _generated_template, _background)
     elif arg == 'setup_templates':
         links = get_base_links()
