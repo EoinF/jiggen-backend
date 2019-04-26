@@ -68,6 +68,7 @@ open class Application(
                     halt(401, "")
                 }
                 response.header("Access-Control-Allow-Origin", jiggenConfig.allowedOrigin)
+                response.header("Access-Control-Expose-Headers", "Content-Length")
         }
     }
 
