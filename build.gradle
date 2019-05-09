@@ -1,0 +1,83 @@
+
+buildscript {
+    ext {
+        spring_boot_version = "2.0.1.RELEASE"
+        kotlin_version = "1.3.10"
+        spark_version = "2.8.0"
+        gson_version = "2.8.5"
+        log4j_version = "2.9.0"
+        jiggen_version = "1.1"
+        gdx_version = "1.9.9"
+        hibernate_validator_version = "6.0.13.Final"
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:$spring_boot_version"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
+    id 'war'
+}
+
+apply plugin: 'org.springframework.boot'
+apply plugin: 'io.spring.dependency-management'
+
+
+group 'com.github.eoinf'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    maven { url "https://oss.sonatype.org/content/repositories/releases/" }
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+
+    // JPA Data (We are going to use Repositories, Entities, Hibernate, etc...)
+    compile "org.springframework.boot:spring-boot-starter-data-jpa"
+
+    // Required because spring boot 2.x.x is dumb and requires it
+    compile "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+
+    testRuntime "com.h2database:h2"
+
+    // Use MySQL Connector-J
+    compile "mysql:mysql-connector-java"
+
+    // Provides validation annotations for ConfigurationProperties
+    compile "org.hibernate:hibernate-validator:$hibernate_validator_version"
+
+    compile "com.sparkjava:spark-core:$spark_version"
+    compile "com.google.code.gson:gson:$gson_version"
+    compile "org.apache.logging.log4j:log4j-core:$log4j_version"
+    compile "org.apache.logging.log4j:log4j-api:$log4j_version"
+
+    compile "com.github.eoinf.jiggen:core:$jiggen_version"
+
+    // Required for the texture packer
+    compile "com.badlogicgames.gdx:gdx-platform:$gdx_version:natives-desktop"
+    compile "com.badlogicgames.gdx:gdx-tools:$gdx_version"
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+
+war {
+    enabled true
+    archiveName "jiggen-backend.war"
+}
