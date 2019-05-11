@@ -13,7 +13,7 @@ import com.github.eoinf.jiggen.webapp.screens.models.PuzzleGraphTemplate
 import com.github.eoinf.jiggen.webapp.screens.models.PuzzlePieceTemplate
 import org.apache.logging.log4j.LogManager
 import java.io.File
-import java.util.*
+import java.util.UUID
 import kotlin.collections.HashMap
 
 class GenerateTemplateTask(private val imageId: UUID, private val imageLocation: String,

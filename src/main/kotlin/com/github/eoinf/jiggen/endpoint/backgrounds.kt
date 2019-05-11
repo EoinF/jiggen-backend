@@ -11,7 +11,7 @@ import org.springframework.stereotype.Controller
 import spark.Spark.get
 import spark.Spark.path
 import spark.Spark.post
-import java.util.*
+import java.util.UUID
 
 private val logger = LogManager.getLogger()
 
@@ -19,7 +19,8 @@ private const val backgrounds = BackgroundFile.RESOURCE_NAME
 
 @Controller
 class BackgroundsController(private val backgroundDao: BackgroundDao, private val jsonTransformer: JsonTransformer,
-                            private val resourceMapper: ResourceMapper, private val imageDao: ImageDao) {
+                            private val resourceMapper: ResourceMapper, private val imageDao: ImageDao
+) {
     init {
         path("/$backgrounds") {
             get("") { req, res ->

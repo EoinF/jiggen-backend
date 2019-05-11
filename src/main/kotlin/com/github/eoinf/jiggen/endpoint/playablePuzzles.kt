@@ -7,7 +7,7 @@ import com.github.eoinf.jiggen.data.PlayablePuzzleDTO
 import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Controller
 import spark.Spark
-import java.util.*
+import java.util.UUID
 
 private val logger = LogManager.getLogger()
 private const val playablePuzzles = PlayablePuzzle.RESOURCE_NAME

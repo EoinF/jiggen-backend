@@ -1,7 +1,7 @@
 package com.github.eoinf.jiggen.data
 
 import java.io.File
-import java.util.*
+import java.util.UUID
 
 class ImageFile(private val id: String?, pathname: String): File(pathname), EntityWithId {
     override fun getId(): UUID {

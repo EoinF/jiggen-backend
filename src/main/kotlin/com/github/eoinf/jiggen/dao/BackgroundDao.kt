@@ -8,7 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import spark.Request
 import java.time.Instant
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 @Service
 class BackgroundDao(private val dataMapper: DataMapper) {

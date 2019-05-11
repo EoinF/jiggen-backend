@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller
 import spark.Spark.get
 import spark.Spark.path
 import spark.Spark.post
-import java.util.*
+import java.util.UUID
 
 private val logger = LogManager.getLogger()
 

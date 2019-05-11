@@ -3,7 +3,7 @@ package com.github.eoinf.jiggen.tasks
 import com.github.eoinf.jiggen.config.JiggenConfig
 import com.github.eoinf.jiggen.dao.GeneratedTemplateDao
 import org.springframework.stereotype.Service
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ExecutorService
 
 @Service

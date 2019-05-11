@@ -10,7 +10,8 @@ import org.springframework.transaction.annotation.Transactional
 import spark.Request
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.Date
+import java.util.UUID
 
 interface IPlayablePuzzleDao {
     fun get(request: Request): List<PlayablePuzzleDTO>

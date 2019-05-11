@@ -9,7 +9,7 @@ import com.github.eoinf.jiggen.data.PlayablePuzzle
 import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.stereotype.Service
 import spark.Request
-import java.util.*
+import java.util.UUID
 
 @Service
 class ResourceMapper(val jiggenConfig: JiggenConfig) {

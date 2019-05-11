@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import spark.Request
-import java.util.*
+import java.util.UUID
 
 interface ITemplateDao {
     fun get(request: Request): List<TemplateFileDTO>

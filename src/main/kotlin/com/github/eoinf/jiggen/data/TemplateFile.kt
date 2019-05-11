@@ -1,6 +1,6 @@
 package com.github.eoinf.jiggen.data
 
-import java.util.*
+import java.util.UUID
 import javax.persistence.CascadeType
 import javax.persistence.Column
 import javax.persistence.Entity

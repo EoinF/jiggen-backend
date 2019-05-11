@@ -5,7 +5,7 @@ import com.github.eoinf.jiggen.data.AtlasFile
 import org.springframework.stereotype.Service
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
+import java.util.UUID
 
 interface IAtlasDao {
     fun get(id: UUID?): AtlasFile?

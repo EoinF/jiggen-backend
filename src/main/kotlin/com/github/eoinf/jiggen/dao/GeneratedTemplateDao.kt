@@ -8,7 +8,7 @@ import com.github.eoinf.jiggen.data.TemplateFile
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import spark.Request
-import java.util.*
+import java.util.UUID
 
 interface IGeneratedTemplateDao {
     fun get(request: Request): List<GeneratedTemplateDTO>

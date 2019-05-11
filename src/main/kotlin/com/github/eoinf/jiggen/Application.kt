@@ -11,7 +11,7 @@ import spark.Spark.exception
 import spark.Spark.halt
 import spark.Spark.options
 import spark.servlet.SparkApplication
-import java.util.*
+import java.util.Base64
 
 /**
  * Class required for deploying as a servlet

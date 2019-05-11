@@ -1,7 +1,7 @@
 
 buildscript {
     ext {
-        spring_boot_version = "2.0.1.RELEASE"
+        spring_boot_version = "2.1.0.RELEASE"
         kotlin_version = "1.3.10"
         spark_version = "2.8.0"
         gson_version = "2.8.5"
@@ -68,6 +68,9 @@ dependencies {
     // Required for the texture packer
     compile "com.badlogicgames.gdx:gdx-platform:$gdx_version:natives-desktop"
     compile "com.badlogicgames.gdx:gdx-tools:$gdx_version"
+
+    // Required to read/write to s3 bucket
+    compile 'software.amazon.awssdk:s3:2.5.40'
 }
 
 compileKotlin {

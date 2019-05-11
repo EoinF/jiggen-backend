@@ -12,7 +12,7 @@ import spark.Spark.get
 import spark.Spark.path
 import java.io.File
 import java.io.FileNotFoundException
-import java.util.*
+import java.util.UUID
 
 private val logger = LogManager.getLogger()
 private const val ATLASES = AtlasFile.RESOURCE_NAME

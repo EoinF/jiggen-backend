@@ -7,7 +7,7 @@ import org.apache.logging.log4j.LogManager
 import org.springframework.stereotype.Controller
 import spark.Spark.get
 import spark.Spark.path
-import java.util.*
+import java.util.UUID
 
 private val logger = LogManager.getLogger()
 private const val puzzleTemplates = GeneratedTemplate.RESOURCE_NAME

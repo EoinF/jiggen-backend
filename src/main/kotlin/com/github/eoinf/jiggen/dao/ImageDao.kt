@@ -13,22 +13,16 @@ import java.io.File
 import java.io.InputStream
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.util.*
-
-
-interface IImageDao {
-    fun get(id: String?, extension: String?): ImageFile?
-    fun save(request: Request?, id: UUID, extension: String, inputStream: InputStream)
-}
+import java.util.UUID
 
 @Service
 class ImageDao(private val config: JiggenConfig, private val templateDao: ITemplateDao,
                private val backgroundDao: BackgroundDao,
                private val generatedTaskRunner: GeneratedTaskRunner,
-               private val imageCompressor: ImageCompressor) : IImageDao {
+               private val imageCompressor: ImageCompressor) {
 
 
-    override fun get(id: String?, extension: String?): ImageFile? {
+    fun get(id: String?, extension: String?): ImageFile? {
         val pathname = "${config.imageFolder}/$id.$extension"
         return if (Files.exists(Paths.get(pathname))) {
             ImageFile(id, pathname)
@@ -37,7 +31,7 @@ class ImageDao(private val config: JiggenConfig, private val templateDao: ITempl
         }
     }
 
-    override fun save(request: Request?, id: UUID, extension: String, inputStream: InputStream) {
+    fun save(request: Request?, id: UUID, extension: String, inputStream: InputStream) {
         val resource = hasMatchingResource(request, id)
 
         if (resource != null) {

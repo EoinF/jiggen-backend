@@ -4,7 +4,7 @@ import com.github.eoinf.jiggen.dao.EdgeListConverter
 import com.github.eoinf.jiggen.dao.VertexDefinitionListConverter
 import com.github.eoinf.jiggen.webapp.screens.models.GraphEdge
 import com.github.eoinf.jiggen.webapp.screens.models.IntRectangle
-import java.util.*
+import java.util.UUID
 import javax.persistence.Column
 import javax.persistence.Convert
 import javax.persistence.Entity
