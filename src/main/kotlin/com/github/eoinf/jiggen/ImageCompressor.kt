@@ -36,7 +36,7 @@ class ImageCompressor {
         return scaledImage
     }
 
-    private fun saveCompressedImage(destination: String, bufferedImage: BufferedImage) {
+    private fun saveCompressedImage(destination: String, bufferedImage: BufferedImage): File {
         val file = File(destination)
 
         val writer = ImageIO.getImageWritersByFormatName("jpg").next()
@@ -50,18 +50,21 @@ class ImageCompressor {
             imageOutputStream.flush()
         }
         writer.dispose()
+        return file
     }
 
-    fun compressAndSave(destination: String, file: File) {
+    fun compressAndSave(destination: String, file: File): File {
         file.inputStream().use {
-            saveCompressedImage(destination, resizeImage(it, 800))
+            return saveCompressedImage(destination, resizeImage(it, 800))
         }
     }
 
-    fun createThumbnailAndSave(destination: String, file: File, thumbnailSize: Int) {
+    fun createThumbnailAndSave(destination: String, file: File, thumbnailSize: Int): File {
+        val destFile = File(destination)
         file.inputStream().use {
             val thumbnail = resizeImage(it, thumbnailSize, false)
-            ImageIO.write(thumbnail, "jpg", File(destination))
+            ImageIO.write(thumbnail, "jpg", destFile)
+            return destFile
         }
     }
 }

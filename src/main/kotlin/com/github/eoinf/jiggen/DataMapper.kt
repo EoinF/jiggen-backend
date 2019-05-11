@@ -22,7 +22,7 @@ import java.util.UUID
 private val logger = LogManager.getLogger()
 
 @Service
-class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenConfiguration: JiggenConfig) {
+class DataMapper(private val resourceMapper: ResourceMapper, private val s3BucketService: S3BucketService) {
 
     fun toTemplateFileDTO(request: Request, templateFile: TemplateFile, isEmbedded: Boolean): TemplateFileDTO {
         val id: UUID = templateFile.getId()
@@ -132,13 +132,13 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val jiggenC
     }
 
     private fun imageExists(id: UUID, extension: String, offset: String = ""): Boolean {
-        val pathname = "${jiggenConfiguration.imageFolder}/$id$offset.$extension"
-        return Files.exists(Paths.get(pathname))
+        val key = "$id$offset.$extension"
+        return s3BucketService.objectExists(key)
     }
 
     private fun atlasExists(id: UUID): Boolean {
-        val pathname = "${jiggenConfiguration.atlasFolder}/$id.atlas"
-        return Files.exists(Paths.get(pathname))
+        val key = "$id.atlas"
+        return s3BucketService.objectExists(key)
     }
 
     fun toPlayablePuzzleDTO(request: Request, playablePuzzle: PlayablePuzzle, isEmbedded: Boolean): PlayablePuzzleDTO {

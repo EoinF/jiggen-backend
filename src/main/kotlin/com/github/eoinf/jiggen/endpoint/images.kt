@@ -3,7 +3,9 @@ package com.github.eoinf.jiggen.endpoint
 import com.github.eoinf.jiggen.JsonTransformer
 import com.github.eoinf.jiggen.ResourceMapper
 import com.github.eoinf.jiggen.dao.ImageDao
+import com.github.eoinf.jiggen.data.S3File
 import com.github.eoinf.jiggen.data.ImageFile
+import com.github.eoinf.jiggen.data.S3ImageFile
 import com.github.eoinf.jiggen.exception.NoMatchingResourceEntryException
 import org.apache.logging.log4j.LogManager
 import org.eclipse.jetty.http.HttpStatus
@@ -12,7 +14,6 @@ import spark.Spark.exception
 import spark.Spark.get
 import spark.Spark.path
 import spark.Spark.put
-import java.io.File
 import java.io.FileNotFoundException
 import java.util.UUID
 
@@ -20,7 +21,7 @@ private val logger = LogManager.getLogger()
 private const val IMAGES = ImageFile.RESOURCE_NAME
 
 @Controller
-class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
+class ImageController(imageDao: ImageDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
     init {
         path("/$IMAGES") {
             exception(IndexOutOfBoundsException::class.java) { e, req, res ->
@@ -59,11 +60,10 @@ class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, res
 
                 val fileParts = req.params(":file")
                         .split('.')
-                val id = fileParts[0]
-                val ext = fileParts[1]
+                val id: String = fileParts[0]
+                val ext: String = fileParts[1]
 
-                val image: File? = imageDao.get(id, ext)
-
+                val image: S3ImageFile? = imageDao.get(id, ext)
 
                 if (image != null) {
                     res.header("Content-Length", image.length().toString())

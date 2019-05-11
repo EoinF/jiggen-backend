@@ -23,6 +23,9 @@ open class JiggenConfig {
     var authUsername: String? = null
     var authPassword: String? = null
 
+    var bucketName: String? = null
+    var bucketFolder: String? = null
+
     var protocol: String = "https"
 
     val imageFolder: String
@@ -42,7 +45,6 @@ open class JiggenConfig {
                 unix!!.atlasFolder!!
             }
         }
-
 
     @Bean
     open fun executorService(): ExecutorService {

@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.PixmapIO
 import com.badlogic.gdx.tools.texturepacker.TexturePacker
 import com.github.eoinf.jiggen.PuzzleExtractor.Decoder.DecodedTemplate
 import com.github.eoinf.jiggen.PuzzleExtractor.Puzzle.PuzzleFactory
+import com.github.eoinf.jiggen.S3BucketService
 import com.github.eoinf.jiggen.dao.GeneratedTemplateDao
 import com.github.eoinf.jiggen.data.GeneratedTemplateDTO
 import com.github.eoinf.jiggen.webapp.screens.models.IntRectangle
@@ -16,9 +17,10 @@ import java.io.File
 import java.util.UUID
 import kotlin.collections.HashMap
 
-class GenerateTemplateTask(private val imageId: UUID, private val imageLocation: String,
+class GenerateTemplateTask(private val imageId: UUID, private val templateImageLocation: String,
                            private val imageFolder: String, private val atlasFolder: String,
-                           private val puzzleTemplateDao: GeneratedTemplateDao) : Runnable {
+                           private val puzzleTemplateDao: GeneratedTemplateDao,
+                           private val s3BucketService: S3BucketService) : Runnable {
 
     private val logger = LogManager.getLogger()
 
@@ -27,7 +29,7 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
         try {
             logger.info("PuzzleTemplateTask::run Fetching file handle")
 
-            val handle = FileHandle(imageLocation)
+            val handle = FileHandle(templateImageLocation)
             val pixmap = Pixmap(handle)
 
             logger.info("PuzzleTemplateTask::run Decoding texture")
@@ -49,8 +51,8 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
             TexturePacker.process(settings, puzzleFolderName, atlasFolderTempFolder, packedImageId.toString())
 
             logger.info("PuzzleTemplateTask::run Extracting atlas details")
-            moveAtlasImagesToImagesFolder(atlasFolderTempFolder, imageFolder)
-            moveAtlasTextToAtlasFolder(atlasFolderTempFolder, atlasFolder, packedImageId)
+            saveAtlasImagesToS3(atlasFolderTempFolder)
+            saveAtlasTextToS3(atlasFolderTempFolder, packedImageId)
             deleteTempFiles(atlasFolderTempFolder)
             deleteTempFiles(puzzleFolderName)
 
@@ -66,6 +68,9 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
 
             logger.info("PuzzleTemplateTask::run Saving resource")
             val savedResource = puzzleTemplateDao.save(null, generatedTemplate)
+
+            // Delete the temporary copy of the template image
+            File(templateImageLocation).delete()
 
             savedResource ?: throw Exception("Saved resource was null")
 
@@ -96,22 +101,21 @@ class GenerateTemplateTask(private val imageId: UUID, private val imageLocation:
      * Moves the generated atlas image to the IMAGES folder so it can be fetched as a resource
      * from the IMAGES endpoint
      */
-    private fun moveAtlasImagesToImagesFolder(srcFolder: String, dstFolder: String) {
-        File(srcFolder).copyRecursively(File(dstFolder))
+    private fun saveAtlasImagesToS3(srcFolder: String) {
+        val srcFiles = File(srcFolder).listFiles()
+        for (file: File in srcFiles) {
+            s3BucketService.putFile(file.name, file.path)
+        }
     }
 
     /**
      * Moves the generated atlas file to the ATLAS folder so it can be fetched as a resource
      * from the ATLAS endpoint
      */
-    private fun moveAtlasTextToAtlasFolder(srcFolder: String, dstFolder: String, atlasName: UUID) {
+    private fun saveAtlasTextToS3(srcFolder: String, atlasName: UUID) {
         val srcFile = File("$srcFolder/$atlasName.atlas")
 
-        srcFile.inputStream().use { input ->
-            File("$dstFolder/$atlasName.atlas").outputStream().use { output ->
-                input.copyTo(output)
-            }
-        }
+        s3BucketService.putFile(srcFile.name, srcFile.path)
     }
 
     private fun deleteTempFiles(tmpFolder: String) {

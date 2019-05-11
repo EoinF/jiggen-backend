@@ -12,8 +12,8 @@
   "Logging": "/usr/local/tomcat/logs",
   "Volumes": [
     {
-      "HostDirectory": "/var/lib/jiggen",
-      "ContainerDirectory": "/var/lib/jiggen"
+      "HostDirectory": "/tmp/jiggen",
+      "ContainerDirectory": "/tmp/jiggen"
     }
   ]
 }
