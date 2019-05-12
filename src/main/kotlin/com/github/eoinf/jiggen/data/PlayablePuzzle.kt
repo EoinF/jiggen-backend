@@ -23,7 +23,7 @@ data class PlayablePuzzle(
 
     @ManyToOne
     @JoinColumn(name = "templateId")
-    var generatedTemplate: GeneratedTemplate? = null
+    var template: TemplateFile? = null
     @ManyToOne
     @JoinColumn(name = "backgroundId")
     var background: BackgroundFile? = null
@@ -37,8 +37,8 @@ data class PlayablePuzzle(
 
     constructor(playablePuzzleDTO: PlayablePuzzleDTO) : this(playablePuzzleDTO.id, playablePuzzleDTO.name,
             playablePuzzleDTO.releaseDate) {
-        if (playablePuzzleDTO.generatedTemplateId != null) {
-            this.generatedTemplate = GeneratedTemplate(playablePuzzleDTO.generatedTemplateId)
+        if (playablePuzzleDTO.templateId != null) {
+            this.template = TemplateFile(playablePuzzleDTO.templateId)
         }
         if (playablePuzzleDTO.backgroundId != null) {
             this.background = BackgroundFile(playablePuzzleDTO.backgroundId)
@@ -52,7 +52,7 @@ data class PlayablePuzzle(
 
 data class PlayablePuzzleDTO(val id: UUID,
                              val name: String? = null,
-                             val generatedTemplateId: UUID? = null,
+                             val templateId: UUID? = null,
                              val backgroundId: UUID? = null,
                              val created: Date? = null,
                              val releaseDate: Date? = null,

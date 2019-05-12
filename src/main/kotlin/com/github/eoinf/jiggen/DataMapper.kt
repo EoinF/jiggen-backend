@@ -157,9 +157,8 @@ class DataMapper(private val resourceMapper: ResourceMapper, private val s3Bucke
                 "self" to resourceMapper.playablePuzzlesUrl(request, id)
         )
 
-        if (playablePuzzle.generatedTemplate != null) {
-            linksMap["generatedTemplate"] = resourceMapper.puzzleTemplatesUrl(request, playablePuzzle.generatedTemplate!!.getId())
-            linksMap["template"] = resourceMapper.templatesUrl(request, playablePuzzle.generatedTemplate!!.templateFile!!.getId())
+        if (playablePuzzle.template != null) {
+            linksMap["template"] = resourceMapper.templatesUrl(request, playablePuzzle.template!!.getId())
         }
         if (playablePuzzle.background != null) {
             linksMap["background"] = resourceMapper.backgroundsUrl(request, playablePuzzle.background!!.getId())

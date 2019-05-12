@@ -48,11 +48,11 @@ class PlayablePuzzleController(playablePuzzleDao: IPlayablePuzzleDao, jsonTransf
                 when {
                     playablePuzzle.backgroundId == null -> {
                         res.status(400)
-                        "background is required!"
+                        "backgroundId is required!"
                     }
-                    playablePuzzle.generatedTemplateId == null -> {
+                    playablePuzzle.templateId == null -> {
                         res.status(400)
-                        "generatedTemplate is required!"
+                        "templateId is required!"
                     }
                     else -> {
                         val result = playablePuzzleDao.save(req, playablePuzzle.copy(id = UUID.randomUUID()))
