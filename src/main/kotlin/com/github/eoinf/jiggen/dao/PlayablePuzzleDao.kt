@@ -11,6 +11,7 @@ import spark.Request
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
+import java.util.Random
 import java.util.UUID
 
 interface IPlayablePuzzleDao {
@@ -47,7 +48,18 @@ open class PlayablePuzzleDao(private val dataMapper: DataMapper) : IPlayablePuzz
         val todayStart = Date(todayStartInstant.toEpochMilli())
         val todayEnd = Date(todayStartInstant.plus(1, ChronoUnit.DAYS).toEpochMilli())
 
-        return playablePuzzleRepository.findAllByReleaseDateBetween(todayStart, todayEnd).toList().map {
+        var puzzles = playablePuzzleRepository.findAllByReleaseDateBetween(todayStart, todayEnd).toList()
+
+        if (puzzles.isEmpty()) {
+            val allPuzzles = playablePuzzleRepository.findAll().asSequence().toList()
+            val rand = Random(todayStart.month.toLong() + todayStart.date.toLong())
+            val puzzle = allPuzzles[rand.nextInt(allPuzzles.count())]
+
+            puzzles = allPuzzles.filter {
+                puzzle.background!!.getId() == it.background!!.getId()
+            }
+        }
+        return puzzles.map {
             dataMapper.toPlayablePuzzleDTO(request, it, true)
         }
     }
