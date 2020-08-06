@@ -17,8 +17,9 @@ from config import TEMPLATE_FILE_PATH, BACKGROUND_FILE_PATH, RELEASE_DATE, TEMPL
 from create_background import create_background
 from create_playable_puzzle import create_playable_puzzle
 from create_template import create_template
-from get_base_links import get_base_links
+from get_base_links import get_base_links, get_base_resource
 from upload_image import upload_image
+from save_static_files import save_static_links
 
 
 def setup_template(templates_link, template_file_path, template_name='Untitled template'):
@@ -182,6 +183,9 @@ def main():
     elif arg == 'create_thumbnails':
         links = get_base_links()
         create_thumbnails(links['backgrounds'])
+    elif arg == 'setup_static_links':
+        base_resource = get_base_resource()
+        save_static_links('', base_resource)
 
 
 if __name__ == '__main__':

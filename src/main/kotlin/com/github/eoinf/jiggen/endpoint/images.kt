@@ -20,7 +20,7 @@ private val logger = LogManager.getLogger()
 private const val IMAGES = ImageFile.RESOURCE_NAME
 
 @Controller
-class ImageController(imageDao: IImageDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
+class ImageController(imageDao: ImageDao, jsonTransformer: JsonTransformer, resourceMapper: ResourceMapper) {
     init {
         path("/$IMAGES") {
             exception(IndexOutOfBoundsException::class.java) { e, req, res ->

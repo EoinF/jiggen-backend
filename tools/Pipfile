@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 requests = "*"
+python-dateutil = "*"
 
 [dev-packages]
 
@@ -17,3 +18,4 @@ test = "python setup.py test"
 setup_templates = "python setup.py setup_templates"
 setup_puzzles = "python setup.py setup_puzzles"
 create_thumbnails = "python setup.py create_thumbnails"
+setup_static_links = "python setup.py setup_static_links"

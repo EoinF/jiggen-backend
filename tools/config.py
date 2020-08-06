@@ -4,10 +4,11 @@ from requests.auth import HTTPBasicAuth
 
 # BASE_ENDPOINT = "https://api.jiggen.app"
 BASE_ENDPOINT = "http://localhost:4567"
+JIGGEN_BASE_PATH = "C:/Users/Eoin/AppData/Roaming/jiggen"
 TEMPLATE_FILE_PATH = "data/template.jpg"
 BACKGROUND_FILE_PATH = "data/background2.jpg"
-TEMPLATE_DIRECTORY_PATH = "D:\Dropbox\Dropbox\Current\Jiggen\generated-templates"
-BACKGROUNDS_DIRECTORY_PATH = "D:\Dropbox\Dropbox\Current\Jiggen\\backgrounds"
+TEMPLATE_DIRECTORY_PATH = "C:/Users/Eoin/Dropbox/Current/Jiggen/generated-templates"
+BACKGROUNDS_DIRECTORY_PATH = "C:/Users/Eoin/Dropbox/Current/Jiggen/backgrounds"
 NAMES_FILE = "data/greek-gods+goddesses.txt"
 USED_NAMES_FILE = "data/used.txt"
 
